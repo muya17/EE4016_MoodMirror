@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import numpy as np
 import torch
@@ -8,30 +9,32 @@ from PIL import Image
 class FER2013Dataset(Dataset):
     def __init__(self, csv_file, split='Training', transform=None):
         """
-        解析 FER2013 数据集
-        split 选项: 'Training' (训练集), 'PublicTest' (验证集), 'PrivateTest' (测试集)
+        Custom Dataset for FER2013.
+        :param csv_file: Path to the fer2013.csv file.
+        :param split: 'Training', 'PublicTest' (Validation), or 'PrivateTest' (Test).
+        :param transform: PyTorch transforms for data augmentation and preprocessing.
         """
-        print(f"正在加载 {split} 数据...")
+        print(f"Loading {split} data...")
         
-        # 1. 读取整个 CSV 文件
+        # 1. Read the entire CSV file
         df = pd.read_csv(csv_file)
         
-        # 2. 根据 Usage 列筛选数据
+        # 2. Filter data based on the 'Usage' column
         df = df[df['Usage'] == split]
         
         self.transform = transform
         self.emotions = df['emotion'].values
         
-        # 3. 将长长的字符串像素转换为 48x48 的矩阵
+        # 3. Convert space-separated pixel strings into 48x48 matrices
         self.images = []
         for pixel_str in df['pixels'].values:
-            # 用空格分割字符串，转为 8位无符号整数 (0-255)
+            # Split string by space and convert to 8-bit unsigned integer (0-255)
             pixels = np.fromstring(pixel_str, sep=' ', dtype=np.uint8)
-            # 重塑为 48x48 的二维矩阵
+            # Reshape into a 48x48 2D matrix
             image = pixels.reshape(48, 48)
             self.images.append(image)
             
-        print(f"{split} 数据加载完成！共 {len(self.images)} 张图片。\n")
+        print(f"{split} data loaded successfully! Total images: {len(self.images)}\n")
 
     def __len__(self):
         return len(self.emotions)
@@ -40,14 +43,14 @@ class FER2013Dataset(Dataset):
         image = self.images[idx]
         label = self.emotions[idx]
         
-        # 将 numpy 矩阵转换为 PIL Image，这是 torchvision 数据增强的基础
+        # Convert numpy array to PIL Image (required by most torchvision transforms)
         image = Image.fromarray(image)
         
-        # 应用数据增强和预处理
+        # Apply data augmentation and preprocessing
         if self.transform:
             image = self.transform(image)
             
-        # 确保标签是长整型（PyTorch 计算交叉熵损失的要求）
+        # Ensure label is a long tensor (required by PyTorch CrossEntropyLoss)
         label = torch.tensor(label, dtype=torch.long)
             
         return image, label
@@ -55,30 +58,31 @@ class FER2013Dataset(Dataset):
 
 def get_dataloaders(csv_path, batch_size=64):
     """
-    暴露给外部调用的主接口，返回 Train, Val, Test 的 DataLoader
+    Main interface to get DataLoaders for Training, Validation, and Testing.
     """
-    # 按照 Proposal 4.3 设计的数据增强逻辑 (仅用于训练集)
+    # Data augmentation logic (Only applied to the training set)
     train_transforms = transforms.Compose([
-        transforms.RandomHorizontalFlip(p=0.5),           # 随机水平翻转
-        transforms.RandomRotation(10),                    # 小角度旋转 (±10°)
-        transforms.RandomAffine(degrees=0, translate=(0.1, 0.1)), # 随机平移 (对应 crop/shift)
-        transforms.ColorJitter(brightness=0.2, contrast=0.2),     # 轻微亮度/对比度调整
-        transforms.ToTensor(),                            # 转为 Tensor 并归一化到 [0, 1]
-        transforms.Normalize(mean=[0.5], std=[0.5])       # 标准化 (灰度图单通道)
+        transforms.RandomHorizontalFlip(p=0.5),
+        transforms.RandomRotation(10),
+        transforms.RandomAffine(degrees=0, translate=(0.1, 0.1)),
+        transforms.ColorJitter(brightness=0.2, contrast=0.2),
+        transforms.ToTensor(),                       # Converts to Tensor and scales pixels to [0, 1]
+        transforms.Normalize(mean=[0.5], std=[0.5])  # Standardization for 1-channel grayscale image
     ])
 
-    # 验证集和测试集绝对不能做数据增强！只能做张量转换和标准化
+    # Validation and Test sets MUST NOT have data augmentation!
+    # Only tensor conversion and standardization.
     test_transforms = transforms.Compose([
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.5], std=[0.5])
     ])
 
-    # 实例化数据集
+    # Instantiate datasets
     train_dataset = FER2013Dataset(csv_path, split='Training', transform=train_transforms)
     val_dataset = FER2013Dataset(csv_path, split='PublicTest', transform=test_transforms)
     test_dataset = FER2013Dataset(csv_path, split='PrivateTest', transform=test_transforms)
 
-    # 包装成 DataLoader，负责批量打包和打乱顺序
+    # Wrap with DataLoader for batching and shuffling
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=2)
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=2)
     test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=2)
@@ -87,18 +91,17 @@ def get_dataloaders(csv_path, batch_size=64):
 
 
 if __name__ == "__main__":
-    # 本地测试代码：直接运行这个脚本时会执行这里
+    # Local testing block: executed only when running this script directly
     test_csv_path = "../data/fer2013.csv" 
     
-    import os
     if os.path.exists(test_csv_path):
-        print("找到数据集，开始测试 DataLoader...")
+        print("Dataset found. Testing DataLoaders...")
         train_loader, val_loader, test_loader = get_dataloaders(test_csv_path, batch_size=16)
         
-        # 尝试抽取一个 Batch 看一下形状
+        # Try fetching one batch to verify tensor shapes
         images, labels = next(iter(train_loader))
-        print(f"\n成功抽取一个 Batch!")
-        print(f"Images shape: {images.shape}")  # 期望输出: [16, 1, 48, 48]
-        print(f"Labels shape: {labels.shape}")  # 期望输出: [16]
+        print("\nSuccessfully fetched one batch!")
+        print(f"Images shape: {images.shape}")  # Expected: [16, 1, 48, 48]
+        print(f"Labels shape: {labels.shape}")  # Expected: [16]
     else:
-        print(f"警告：未在 {test_csv_path} 找到数据集。请确保数据集已下载并放对位置。")
+        print(f"Warning: Dataset not found at {test_csv_path}. Please ensure it is downloaded and placed correctly.")
