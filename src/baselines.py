@@ -45,7 +45,7 @@ def run_baseline():
     """
     Main pipeline for the Classical ML Baseline (HOG + SVM).
     """
-    csv_path = "../data/fer2013.csv"
+    csv_path = "data/fer2013.csv"
     if not os.path.exists(csv_path):
         print(f"Error: Dataset not found at {csv_path}")
         return

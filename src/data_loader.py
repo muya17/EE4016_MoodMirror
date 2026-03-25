@@ -92,7 +92,7 @@ def get_dataloaders(csv_path, batch_size=64):
 
 if __name__ == "__main__":
     # Local testing block: executed only when running this script directly
-    test_csv_path = "../data/fer2013.csv" 
+    test_csv_path = "data/fer2013.csv" 
     
     if os.path.exists(test_csv_path):
         print("Dataset found. Testing DataLoaders...")
