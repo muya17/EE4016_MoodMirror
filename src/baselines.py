@@ -7,8 +7,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Import the dataset class we just built
+#basdcjhabsdi
 from data_loader import FER2013Dataset
-
+ 
 def extract_hog_features(dataset):
     """
     Extract HOG (Histogram of Oriented Gradients) features from the dataset.
