@@ -142,5 +142,42 @@ def train_model():
     print(f"The best weights are safely stored in: {best_model_path}")
     print("="*50 + "\n")
 
+   # ==============================================================================
+    # FINAL EVALUATION: TESTING ON UNSEEN DATA
+    # ==============================================================================
+    print("\n🏆 RUNNING FINAL EVALUATION ON TEST SET...")
+
+    # 1. Instantiate a fresh model to ensure a clean slate
+    best_model = CLCM(num_classes=7).to(device)
+
+    # 2. Load the best saved weights from the training/validation phase
+    best_model.load_state_dict(torch.load(best_model_path))
+    
+    # 3. Set the model to evaluation mode (disables Dropout, fixes BatchNorm)
+    best_model.eval()
+
+    correct_test = 0
+    total_test = 0
+
+    # 4. Disable gradient tracking for faster computation and lower memory usage
+    with torch.no_grad():
+        for inputs, labels in test_loader:
+            inputs, labels = inputs.to(device), labels.to(device)
+            
+            # Forward pass
+            outputs = best_model(inputs)
+            
+            # Get the index of the max log-probability as the predicted label
+            _, predicted = torch.max(outputs, 1)
+            
+            total_test += labels.size(0)
+            correct_test += (predicted == labels).sum().item()
+
+    # 5. Calculate and print the final official accuracy
+    final_test_acc = (correct_test / total_test) * 100
+    print("\n" + "="*50)
+    print(f"🔥 OFFICIAL TEST ACCURACY: {final_test_acc:.2f}% 🔥")
+    print("="*50 + "\n")
+
 if __name__ == '__main__':
     train_model()

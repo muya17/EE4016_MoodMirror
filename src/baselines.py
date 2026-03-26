@@ -6,7 +6,7 @@ from sklearn.metrics import accuracy_score, f1_score, confusion_matrix
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Import the dataset class you just built!
+# Import the dataset class we just built
 from data_loader import FER2013Dataset
 
 def extract_hog_features(dataset):
