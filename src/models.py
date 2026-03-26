@@ -97,31 +97,31 @@ class SimpleCNN(nn.Module):
 if __name__ == "__main__":
     import time
     print("\n" + "="*50)
-    print("🚀 STARTING CLCM (2024) MODEL VERIFICATION")
+    print("STARTING CLCM (2024) MODEL VERIFICATION")
     print("="*50)
 
     # 1. Instantiate the model
     try:
         model = CLCM(num_classes=7)
-        print("\n✅ [PASS 1/3] Successfully instantiated CLCM model class.")
+        print("\n[PASS 1/3] Successfully instantiated CLCM model class.")
     except Exception as e:
-        print(f"\n❌ [FAIL 1/3] Failed to instantiate CLCM model. Error: {e}")
+        print(f"\n[FAIL 1/3] Failed to instantiate CLCM model. Error: {e}")
         exit()
 
     # 2. Verify Parameter Count (Crucial for M2 goal < 1.5M)
     # PyTorch idiom to count only trainable parameters
     total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
-    print(f"\n📊 [PASS 2/3] Verification of Model Complexity:")
-    print(f"   --> Total trainable parameters: {total_params:,}")
+    print(f"\n[PASS 2/3] Verification of Model Complexity:")
+    print(f"Total trainable parameters: {total_params:,}")
 
     LIMIT = 1_500_000
     if total_params < LIMIT:
-        print(f"   🏆 SUCCESS: Parameter count is well under the 1.5M budget!")
+        print(f"SUCCESS: Parameter count is well under the 1.5M budget")
     else:
-        print(f"   ⚠️ WARNING: Parameter count exceeds 1.5M! Needs optimization.")
+        print(f"WARNING: Parameter count exceeds 1.5M! Needs optimization.")
 
     # 3. Test Forward Pass with Dummy Data (Verifies input shapes & tensor flow)
-    print("\n🔄 [PASS 3/3] Testing forward pass with dummy input...")
+    print("\n[PASS 3/3] Testing forward pass with dummy input...")
     
     # Simulate FER2013 input: 1 Batch, 1 Channel (grayscale), 48x48 resolution
     dummy_input = torch.randn(1, 1, 48, 48)
@@ -131,20 +131,20 @@ if __name__ == "__main__":
         output = model(dummy_input)
         end_time = time.time()
         
-        print(f"   --> Successfully completed forward pass in {(end_time - start_time)*1000:.2f}ms.")
+        print(f"Successfully completed forward pass in {(end_time - start_time)*1000:.2f}ms.")
         
         # Output shape should be (BatchSize, NumClasses) -> (1, 7)
-        print(f"   --> Simulated Input shape : {dummy_input.shape}")
-        print(f"   --> Model Output shape   : {output.shape}")
+        print(f"Simulated Input shape : {dummy_input.shape}")
+        print(f"Model Output shape   : {output.shape}")
         
         if output.shape == torch.Size([1, 7]):
-            print(f"   🏆 SUCCESS: Tensor shapes flowing correctly!")
+            print(f"SUCCESS: Tensor shapes flowing correctly")
         else:
-            print(f"   ⚠️ WARNING: Output shape mismatch. Expected [1, 7].")
+            print(f"WARNING: Output shape mismatch. Expected [1, 7].")
 
     except Exception as e:
-        print(f"   ❌ Failed tensor flow during forward pass. Error: {e}")
+        print(f"Failed tensor flow during forward pass. Error: {e}")
 
     print("\n" + "="*50)
-    print("🎉 MODEL VERIFICATION COMPLETE!")
+    print("MODEL VERIFICATION COMPLETE")
     print("="*50 + "\n")

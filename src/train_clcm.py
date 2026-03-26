@@ -30,26 +30,26 @@ def train_model():
     # Automatically uses Apple Silicon (MPS) if available, otherwise fallback to CPU
     if torch.backends.mps.is_available():
         device = torch.device("mps")
-        print("🚀 USING APPLE SILICON (MPS) FOR HARDWARE ACCELERATION")
+        print("USING APPLE SILICON (MPS) FOR HARDWARE ACCELERATION")
     elif torch.cuda.is_available():
         device = torch.device("cuda")
-        print("🚀 USING NVIDIA GPU (CUDA)")
+        print("USING NVIDIA GPU (CUDA)")
     else:
         device = torch.device("cpu")
-        print("⚠️ USING CPU (Training will be slower).")
+        print("USING CPU (Training will be slower).")
 
     os.makedirs(SAVE_DIR, exist_ok=True)
 
     # 2. Load Data Pipeline (M2's Masterpiece)
-    print("\n📦 Loading Datasets...")
+    print("\nLoading Datasets...")
     # NOTE: Assuming get_dataloaders returns 3 loaders. 
     # If yours returns 2 (train, val), just remove the test_loader part.
     train_loader, val_loader, test_loader = get_dataloaders(DATA_PATH, BATCH_SIZE)
-    print(f"   --> Train batches: {len(train_loader)}")
-    print(f"   --> Val batches:   {len(val_loader)}")
+    print(f"Train batches: {len(train_loader)}")
+    print(f"Val batches:   {len(val_loader)}")
 
     # 3. Initialize Model, Loss, and Optimizer
-    print("\n🧠 Initializing CLCM (2024) Architecture...")
+    print("\nInitializing CLCM (2024) Architecture...")
     model = CLCM(num_classes=7).to(device)
     
     criterion = nn.CrossEntropyLoss()
@@ -65,7 +65,7 @@ def train_model():
     best_model_path = os.path.join(SAVE_DIR, 'clcm_best_weights.pth')
 
     # 4. The Training Loop
-    print("\n🔥 STARTING TRAINING LOOP...")
+    print("\nSTARTING TRAINING LOOP...")
     for epoch in range(EPOCHS):
         start_time = time.time()
         
@@ -135,17 +135,17 @@ def train_model():
         if epoch_val_acc > best_val_acc:
             best_val_acc = epoch_val_acc
             torch.save(model.state_dict(), best_model_path)
-            print(f"   🌟 New best validation accuracy! Model saved to {best_model_path}")
+            print(f"    New best validation accuracy! Model saved to {best_model_path}")
 
     print("\n" + "="*50)
-    print(f"🎉 TRAINING COMPLETE! Best Validation Accuracy: {best_val_acc:.2f}%")
+    print(f"TRAINING COMPLETE! Best Validation Accuracy: {best_val_acc:.2f}%")
     print(f"The best weights are safely stored in: {best_model_path}")
     print("="*50 + "\n")
 
-   # ==============================================================================
-    # FINAL EVALUATION: TESTING ON UNSEEN DATA
     # ==============================================================================
-    print("\n🏆 RUNNING FINAL EVALUATION ON TEST SET...")
+    # TESTING ON UNSEEN DATA
+    # ==============================================================================
+    print("\nRUNNING FINAL EVALUATION ON TEST SET...")
 
     # 1. Instantiate a fresh model to ensure a clean slate
     best_model = CLCM(num_classes=7).to(device)
@@ -176,7 +176,7 @@ def train_model():
     # 5. Calculate and print the final official accuracy
     final_test_acc = (correct_test / total_test) * 100
     print("\n" + "="*50)
-    print(f"🔥 OFFICIAL TEST ACCURACY: {final_test_acc:.2f}% 🔥")
+    print(f"TEST ACCURACY: {final_test_acc:.2f}%")
     print("="*50 + "\n")
 
 if __name__ == '__main__':

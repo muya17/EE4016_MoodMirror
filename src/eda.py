@@ -21,7 +21,7 @@ def plot_class_distribution(df):
     Analyzes and visualizes the distribution of emotion labels in the dataset.
     Crucial for identifying Class Imbalance before training begins.
     """
-    print("\n📊 Analyzing class distribution...")
+    print("\nAnalyzing class distribution...")
     
     # Count the occurrences of each emotion label (0 to 6)
     label_counts = df['emotion'].value_counts().sort_index()
@@ -48,7 +48,7 @@ def plot_class_distribution(df):
     save_path = os.path.join(OUTPUT_FOLDER, 'class_distribution.png')
     plt.tight_layout()
     plt.savefig(save_path)
-    print(f"✅ Success! Class distribution chart saved to: {save_path}")
+    print(f"Success! Class distribution chart saved to: {save_path}")
 
 
 def visualize_hog_on_random_data(df):
@@ -58,7 +58,7 @@ def visualize_hog_on_random_data(df):
     and visualizes the HOG (Histogram of Oriented Gradients) features to verify 
     feature extraction quality on low-resolution data.
     """
-    print("\n👁️ Generating HOG visualization...")
+    print("\nGenerating HOG visualization...")
     
     # 1. Randomly sample one image
     sample = df.sample(n=1)
@@ -98,14 +98,14 @@ def visualize_hog_on_random_data(df):
     save_path = os.path.join(OUTPUT_FOLDER, 'hog_visualization.png')
     plt.tight_layout()
     plt.savefig(save_path)
-    print(f"✅ Success! HOG visualization saved to: {save_path}")
+    print(f"Success! HOG visualization saved to: {save_path}")
 
 
 if __name__ == "__main__":
     os.makedirs(OUTPUT_FOLDER, exist_ok=True)
     
     if not os.path.exists(DATA_FILE):
-        print(f"❌ Error: {DATA_FILE} not found. Please ensure the dataset is downloaded.")
+        print(f"Error: {DATA_FILE} not found. Please ensure the dataset is downloaded.")
     else:
         print("Loading FER2013 dataset into memory (this may take a few seconds)...")
         # Load the CSV exactly once, then pass it to both EDA functions
@@ -115,4 +115,4 @@ if __name__ == "__main__":
         plot_class_distribution(dataset_df)
         visualize_hog_on_random_data(dataset_df)
         
-        print("\n🎉 All Exploratory Data Analysis (EDA) tasks completed!")
+        print("\nAll Exploratory Data Analysis (EDA) tasks completed!")
