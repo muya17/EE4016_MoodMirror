@@ -43,3 +43,26 @@ MoodMirror is a lightweight facial expression recognition system that classifies
 - Interactive web demo (image upload and webcam capture)
 
 See `EE4016_Project_Proposal.md` for full details.
+
+## Dataset
+We use the **FER2013** facial expression dataset for training and evaluation.
+
+- Kaggle dataset page: https://www.kaggle.com/datasets/msambare/fer2013
+- You may need a Kaggle account to download the dataset files.
+
+## Run Demo App
+1. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+2. Run Streamlit app:
+   ```bash
+   streamlit run demo_app.py
+   ```
+
+Live video mode requires browser camera permissions and uses `streamlit-webrtc`.
+
+## Demo Preview
+The Streamlit integration app is ready for team integration.
+
+![MoodMirror Demo UI](assets/demo_preview.png)
