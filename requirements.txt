@@ -1,0 +1,22 @@
+# --- Core Deep Learning Libraries (Used by M3 and your DataLoader) ---
+torch
+torchvision
+
+# --- Data Processing & Scientific Computing (Used by your DataLoader) ---
+numpy
+pandas
+Pillow
+
+# --- Traditional ML & Image Processing (Used for your HOG+SVM Baseline) ---
+scikit-learn
+scikit-image
+
+# --- Visualization & Evaluation (Used by M4 / M5 for Confusion Matrix) ---
+matplotlib
+seaborn
+
+# --- Computer Vision & Face Detection (Used by M5 / M1 for Webcam Logic) ---
+opencv-python
+
+# --- Web Demo Frontend (Used by M1 for final integration) ---
+streamlit
