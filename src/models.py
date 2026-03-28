@@ -1,5 +1,8 @@
+from xml.parsers.expat import model
+
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 class DepthwiseSeparableConv(nn.Module):
     """
@@ -80,71 +83,279 @@ class CLCM(nn.Module):
 
 class SimpleCNN(nn.Module):
     """
-    Standard CNN baseline. 
-    (M3 will implement this later).
+    A simple CNN architecture for the M3 deliverable.
+    Designed to achieve ≥68% validation accuracy on FER2013.
     """
-    def __init__(self):
+    def __init__(self, num_classes=7):
         super(SimpleCNN, self).__init__()
-        pass
+        
+        # Conv Block 1: 1 -> 32 channels
+        self.conv1 = nn.Conv2d(1, 32, kernel_size=3, padding=1)
+        self.bn1 = nn.BatchNorm2d(32)
+        self.pool = nn.MaxPool2d(2, 2)  # 48x48 -> 24x24
+        self.dropout1 = nn.Dropout(0.25)
+        
+        # Conv Block 2: 32 -> 64 channels
+        self.conv2 = nn.Conv2d(32, 64, kernel_size=3, padding=1)
+        self.bn2 = nn.BatchNorm2d(64)
+        # 24x24 -> 12x12
+        self.dropout2 = nn.Dropout(0.25)
+        
+        # Conv Block 3: 64 -> 128 channels
+        self.conv3 = nn.Conv2d(64, 128, kernel_size=3, padding=1)
+        self.bn3 = nn.BatchNorm2d(128)
+        # 12x12 -> 6x6
+        self.dropout3 = nn.Dropout(0.25)
+        
+        # Conv Block 4: 128 -> 256 channels (optional for better accuracy)
+        self.conv4 = nn.Conv2d(128, 256, kernel_size=3, padding=1)
+        self.bn4 = nn.BatchNorm2d(256)
+        # 6x6 -> 3x3
+        self.dropout4 = nn.Dropout(0.25)
+        
+        # Global Average Pooling (replaces large FC layers)
+        self.global_avg_pool = nn.AdaptiveAvgPool2d((1, 1))
+        
+        # Fully Connected Head
+        self.fc = nn.Linear(256, num_classes)
+        self.dropout_fc = nn.Dropout(0.5)
+
 
     def forward(self, x):
+        # Block 1
+        x = self.pool(F.relu(self.bn1(self.conv1(x))))
+        x = self.dropout1(x)
+        
+        # Block 2
+        x = self.pool(F.relu(self.bn2(self.conv2(x))))
+        x = self.dropout2(x)
+        
+        # Block 3
+        x = self.pool(F.relu(self.bn3(self.conv3(x))))
+        x = self.dropout3(x)
+        
+        # Block 4
+        x = self.pool(F.relu(self.bn4(self.conv4(x))))
+        x = self.dropout4(x)
+        
+        # Global Average Pooling
+        x = self.global_avg_pool(x)
+        x = torch.flatten(x, 1)
+        
+        # FC Head
+        x = self.dropout_fc(F.relu(x))
+        x = self.fc(x)
+        
+        return x
+    
+class DepthwiseSeparableConv(nn.Module):
+    """
+    Depthwise Separable Convolution for LiteCNN.
+    Reduces parameters while maintaining accuracy.
+    """
+    def __init__(self, in_channels, out_channels, stride=1):
+        super(DepthwiseSeparableConv, self).__init__()
+        
+        # Depthwise convolution
+        self.depthwise = nn.Conv2d(
+            in_channels, in_channels, kernel_size=3,
+            stride=stride, padding=1, groups=in_channels, bias=False
+        )
+        self.bn1 = nn.BatchNorm2d(in_channels)
+        
+        # Pointwise convolution (1x1)
+        self.pointwise = nn.Conv2d(
+            in_channels, out_channels, kernel_size=1, bias=False
+        )
+        self.bn2 = nn.BatchNorm2d(out_channels)
+        
+        self.relu = nn.ReLU6(inplace=True)
+
+    def forward(self, x):
+        x = self.relu(self.bn1(self.depthwise(x)))
+        x = self.relu(self.bn2(self.pointwise(x)))
+        return x
+
+
+class ResidualBlock(nn.Module):
+    """
+    Residual Block with skip connection.
+    Helps gradient flow and improves accuracy.
+    """
+    def __init__(self, in_channels, out_channels, stride=1):
+        super(ResidualBlock, self).__init__()
+        
+        self.conv1 = DepthwiseSeparableConv(in_channels, out_channels, stride)
+        self.conv2 = DepthwiseSeparableConv(out_channels, out_channels, stride=1)
+        
+        self.relu = nn.ReLU6(inplace=True)
+        
+        # Skip connection if channels or size change
+        self.skip = None
+        if stride != 1 or in_channels != out_channels:
+            self.skip = nn.Sequential(
+                nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=stride, bias=False),
+                nn.BatchNorm2d(out_channels)
+            )
+
+    def forward(self, x):
+        residual = x
+        
+        out = self.conv1(x)
+        out = self.conv2(out)
+        
+        if self.skip is not None:
+            residual = self.skip(x)
+        
+        out = out + residual
+        out = self.relu(out)
+        
+        return out
+
+
+class LiteCNN(nn.Module):
+    """
+    An even more lightweight CNN architecture for experimentation.
+    Target: < 1.5M parameters, achieve ≥68% validation accuracy.
+    """
+    def __init__(self, num_classes=7):
+        super(LiteCNN, self).__init__()
+        
+        # Initial convolution
+        self.init_conv = nn.Sequential(
+            nn.Conv2d(1, 32, kernel_size=3, stride=1, padding=1, bias=False),
+            nn.BatchNorm2d(32),
+            nn.ReLU6(inplace=True)
+        )
+        
+        # Feature extraction with residual blocks
+        # Block 1: 48x48 -> 24x24
+        self.block1 = self._make_layer(32, 48, 2, stride=2)
+        
+        # Block 2: 24x24 -> 12x12
+        self.block2 = self._make_layer(48, 96, 2, stride=2)
+        
+        # Block 3: 12x12 -> 6x6
+        self.block3 = self._make_layer(96, 192, 3, stride=2)
+        
+        # Block 4: 6x6 -> 3x3
+        self.block4 = self._make_layer(192, 384, 2, stride=2)
+        
+        # Global Average Pooling
+        self.global_avg_pool = nn.AdaptiveAvgPool2d((1, 1))
+        
+        # Classifier
+        self.classifier = nn.Sequential(
+            nn.Dropout(0.3),
+            nn.Linear(384, num_classes)
+        )
+
+    def _make_layer(self, in_channels, out_channels, num_blocks, stride):
+        """Create a layer with residual blocks"""
+        layers = []
+        layers.append(ResidualBlock(in_channels, out_channels, stride))
+        
+        for _ in range(1, num_blocks):
+            layers.append(ResidualBlock(out_channels, out_channels, stride=1))
+        
+        return nn.Sequential(*layers)
+
+    def forward(self, x):
+        x = self.init_conv(x)
+        x = self.block1(x)
+        x = self.block2(x)
+        x = self.block3(x)
+        x = self.block4(x)
+        
+        x = self.global_avg_pool(x)
+        x = torch.flatten(x, 1)
+        x = self.classifier(x)
+        
         return x
     
 
+def count_parameters(model):
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
+
 # ==============================================================================
-# TESTING CODE (for M2 verification)
+# TESTING CODE (for M3 verification)
 # ==============================================================================
 if __name__ == "__main__":
     import time
-    print("\n" + "="*50)
-    print("STARTING CLCM (2024) MODEL VERIFICATION")
-    print("="*50)
-
-    # 1. Instantiate the model
-    try:
-        model = CLCM(num_classes=7)
-        print("\n[PASS 1/3] Successfully instantiated CLCM model class.")
-    except Exception as e:
-        print(f"\n[FAIL 1/3] Failed to instantiate CLCM model. Error: {e}")
-        exit()
-
-    # 2. Verify Parameter Count (Crucial for M2 goal < 1.5M)
-    # PyTorch idiom to count only trainable parameters
-    total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
-    print(f"\n[PASS 2/3] Verification of Model Complexity:")
-    print(f"Total trainable parameters: {total_params:,}")
-
-    LIMIT = 1_500_000
-    if total_params < LIMIT:
-        print(f"SUCCESS: Parameter count is well under the 1.5M budget")
-    else:
-        print(f"WARNING: Parameter count exceeds 1.5M! Needs optimization.")
-
-    # 3. Test Forward Pass with Dummy Data (Verifies input shapes & tensor flow)
-    print("\n[PASS 3/3] Testing forward pass with dummy input...")
+    import torch.nn.functional as F
     
-    # Simulate FER2013 input: 1 Batch, 1 Channel (grayscale), 48x48 resolution
+    print("\n" + "="*50)
+    print("TESTING M3 MODELS (SimpleCNN & CLCM)")
+    print("="*50)
+    
+    # Test SimpleCNN
+    print("\n--- SimpleCNN ---")
+    simple_model = SimpleCNN(num_classes=7)
+    simple_params = count_parameters(simple_model)
+    print(f"Parameters: {simple_params:,}")
+
+    # Test LiteCNN ← NEW
+    print("\n--- LiteCNN ---")
+    lite_model = LiteCNN(num_classes=7)
+    lite_params = count_parameters(lite_model)
+    print(f"Parameters: {lite_params:,}")
+    
+    # Test CLCM
+    print("\n--- CLCM (M2) ---")
+    clcm_model = CLCM(num_classes=7)
+    clcm_params = count_parameters(clcm_model)
+    print(f"Parameters: {clcm_params:,}")
+    
+    # Verify parameter counts
+    print("\n--- Parameter Budget Check ---")
+    if lite_params < 1_500_000:
+        print(f"✅ LiteCNN meets budget (<1.5M): {lite_params:,}")
+    else:
+        print(f"❌ LiteCNN exceeds budget: {lite_params:,}")
+
+    if clcm_params < 1_500_000:
+        print(f"✅ CLCM meets budget (<1.5M): {clcm_params:,}")
+    else:
+        print(f"❌ CLCM exceeds budget: {clcm_params:,}")
+    
+    # Test forward pass
+    print("\n--- Forward Pass Test ---")
     dummy_input = torch.randn(1, 1, 48, 48)
     
-    start_time = time.time()
-    try:
-        output = model(dummy_input)
-        end_time = time.time()
+    simple_output = simple_model(dummy_input)
+    print(f"SimpleCNN output shape: {simple_output.shape}")
+    
+    lite_output = lite_model(dummy_input)
+    print(f"LiteCNN output shape: {lite_output.shape}")
+    
+    clcm_output = clcm_model(dummy_input)
+    print(f"CLCM output shape: {clcm_output.shape}")
+    
+    # Test inference latency (CPU)
+    print("\n--- CPU Latency Test ---")
+    simple_model.eval()
+    lite_model.eval()
+    clcm_model.eval()
+    
+    with torch.no_grad():
+        start = time.time()
+        for _ in range(100):
+            _ = simple_model(dummy_input)
+        simple_latency = (time.time() - start) / 100 * 1000
+        print(f"SimpleCNN avg latency: {simple_latency:.2f}ms")
         
-        print(f"Successfully completed forward pass in {(end_time - start_time)*1000:.2f}ms.")
+        start = time.time()
+        for _ in range(100):
+            _ = lite_model(dummy_input)
+        lite_latency = (time.time() - start) / 100 * 1000
+        print(f"LiteCNN avg latency: {lite_latency:.2f}ms")
         
-        # Output shape should be (BatchSize, NumClasses) -> (1, 7)
-        print(f"Simulated Input shape : {dummy_input.shape}")
-        print(f"Model Output shape   : {output.shape}")
-        
-        if output.shape == torch.Size([1, 7]):
-            print(f"SUCCESS: Tensor shapes flowing correctly")
-        else:
-            print(f"WARNING: Output shape mismatch. Expected [1, 7].")
-
-    except Exception as e:
-        print(f"Failed tensor flow during forward pass. Error: {e}")
-
+        start = time.time()
+        for _ in range(100):
+            _ = clcm_model(dummy_input)
+        clcm_latency = (time.time() - start) / 100 * 1000
+        print(f"CLCM avg latency: {clcm_latency:.2f}ms")
+    
     print("\n" + "="*50)
-    print("MODEL VERIFICATION COMPLETE")
+    print("MODEL TEST COMPLETE")
     print("="*50 + "\n")
