@@ -15,7 +15,7 @@ from data_loader import get_dataloaders
 # ==============================================================================
 # HYPERPARAMETERS & CONFIGURATION (M4 can tweak these for ablation studies)
 # ==============================================================================
-DATA_PATH = 'data/fer2013.csv'
+DATA_PATH = 'data/fer2013'
 BATCH_SIZE = 64
 EPOCHS = 50
 LEARNING_RATE = 0.001

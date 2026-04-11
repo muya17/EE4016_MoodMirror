@@ -8,7 +8,7 @@ from skimage import exposure
 import os
 
 # Define globally shared configurations
-DATA_FILE = 'data/fer2013.csv'
+DATA_FILE = 'data/fer2013'
 OUTPUT_FOLDER = 'plots'
 EMOTIONS_MAP = {
     0: 'Angry', 1: 'Disgust', 2: 'Fear', 3: 'Happy', 

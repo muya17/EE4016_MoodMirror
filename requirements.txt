@@ -1,0 +1,22 @@
+# Core deep learning
+torch
+torchvision
+
+# Data and utilities
+numpy
+pandas
+Pillow
+
+# Classical ML baseline
+scikit-learn
+scikit-image
+
+# Visualization
+matplotlib
+seaborn
+
+# Demo app and webcam support
+streamlit
+streamlit-webrtc
+av
+opencv-python

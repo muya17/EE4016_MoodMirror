@@ -16,7 +16,7 @@ from data_loader import get_dataloaders
 # ==============================================================================
 # HYPERPARAMETERS & CONFIGURATION (M4 can tweak these for ablation studies)
 # ==============================================================================
-DATA_PATH = 'data/fer2013.csv'
+DATA_PATH = 'data/fer2013'
 BATCH_SIZE = 64
 EPOCHS = 50
 LEARNING_RATE = 0.001
@@ -123,6 +123,7 @@ def train_model():
         
         # --- VALIDATION PHASE ---
         model.eval()
+        val_loss = 0.0
         correct_val = 0
         total_val = 0
         
@@ -130,6 +131,8 @@ def train_model():
             for inputs, labels in val_loader:
                 inputs, labels = inputs.to(device), labels.to(device)
                 outputs = model(inputs)
+                loss = criterion(outputs, labels)
+                val_loss += loss.item() * inputs.size(0)
                 _, predicted = torch.max(outputs, 1)
                 total_val += labels.size(0)
                 correct_val += (predicted == labels).sum().item()

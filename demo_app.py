@@ -2,12 +2,23 @@ from __future__ import annotations
 
 import time
 from dataclasses import dataclass
+from pathlib import Path
+import pickle
 from threading import Lock
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Type
 
 import numpy as np
 import streamlit as st
 from PIL import Image
+from skimage.feature import hog
+
+try:
+    import torch
+    from src.models import LiteCNN, SimpleCNN
+
+    TORCH_MODELS_AVAILABLE = True
+except ImportError:
+    TORCH_MODELS_AVAILABLE = False
 
 try:
     import av
@@ -101,6 +112,80 @@ class HOGSVMAdapter(BaseAdapter):
         )
 
 
+def extract_hog_descriptor(face_tensor: np.ndarray, hog_config: Dict[str, Any]) -> np.ndarray:
+    descriptor = hog(
+        face_tensor,
+        orientations=int(hog_config.get("orientations", 9)),
+        pixels_per_cell=tuple(hog_config.get("pixels_per_cell", [8, 8])),
+        cells_per_block=tuple(hog_config.get("cells_per_block", [2, 2])),
+        visualize=False,
+        feature_vector=True,
+    )
+    return descriptor.astype(np.float32)
+
+
+class HOGArtifactAdapter(BaseAdapter):
+    def __init__(self, artifact_path: Path) -> None:
+        self.model_name = "HOG+SVM (artifact)"
+        self.model_family = "hog_svm"
+        self.class_order = EMOTIONS
+        self._artifact_path = artifact_path
+        self._clf = None
+        self._scaler = None
+        self._hog_config: Dict[str, Any] = {
+            "orientations": 9,
+            "pixels_per_cell": [8, 8],
+            "cells_per_block": [2, 2],
+        }
+        self._load_error: Optional[str] = None
+
+    def _lazy_load(self) -> None:
+        if self._clf is not None or self._load_error is not None:
+            return
+
+        if not self._artifact_path.exists():
+            self._load_error = f"HOG artifact not found: {self._artifact_path}"
+            return
+
+        try:
+            with self._artifact_path.open("rb") as f:
+                payload = pickle.load(f)
+            self._clf = payload["classifier"]
+            self._scaler = payload.get("scaler")
+            self._hog_config = payload.get("hog_config", self._hog_config)
+            self.class_order = payload.get("class_order", self.class_order)
+        except Exception as exc:
+            self._load_error = str(exc)
+
+    def predict(self, face_tensor: np.ndarray) -> PredictionResult:
+        start = time.perf_counter()
+        self._lazy_load()
+        if self._clf is None:
+            error_detail = self._load_error or "unknown HOG adapter load error"
+            raise RuntimeError(f"{self.model_name} unavailable: {error_detail}")
+
+        features = extract_hog_descriptor(face_tensor, self._hog_config).reshape(1, -1)
+        if self._scaler is not None:
+            features = self._scaler.transform(features)
+
+        decision = self._clf.decision_function(features)
+        decision = np.asarray(decision, dtype=np.float32)
+        if decision.ndim == 1:
+            decision = decision.reshape(1, -1)
+
+        probs = softmax(decision[0])
+        class_id = int(np.argmax(probs))
+        latency_ms = (time.perf_counter() - start) * 1000
+        return PredictionResult(
+            class_id=class_id,
+            label=self.class_order[class_id],
+            confidence=float(probs[class_id]),
+            probs=[float(x) for x in probs],
+            latency_ms=float(latency_ms),
+            model_name=self.model_name,
+        )
+
+
 class CNNStyleAdapter(BaseAdapter):
     def __init__(self, model_name: str, seed: int, scale: float) -> None:
         self.model_name = model_name
@@ -127,13 +212,108 @@ class CNNStyleAdapter(BaseAdapter):
         )
 
 
+class TorchCheckpointAdapter(BaseAdapter):
+    def __init__(
+        self,
+        model_name: str,
+        model_family: str,
+        model_cls: Type,
+        checkpoint_path: Path,
+    ) -> None:
+        self.model_name = model_name
+        self.model_family = model_family
+        self.class_order = EMOTIONS
+        self._model_cls = model_cls
+        self._checkpoint_path = checkpoint_path
+        self._model = None
+        self._load_error: Optional[str] = None
+
+    def _lazy_load(self) -> None:
+        if self._model is not None or self._load_error is not None:
+            return
+
+        if not TORCH_MODELS_AVAILABLE:
+            self._load_error = "PyTorch or src.models import failed"
+            return
+
+        if not self._checkpoint_path.exists():
+            self._load_error = f"Checkpoint not found: {self._checkpoint_path}"
+            return
+
+        try:
+            model = self._model_cls(num_classes=len(self.class_order))
+            state = torch.load(str(self._checkpoint_path), map_location="cpu")
+            model.load_state_dict(state)
+            model.eval()
+            self._model = model
+        except Exception as exc:
+            self._load_error = str(exc)
+
+    def predict(self, face_tensor: np.ndarray) -> PredictionResult:
+        start = time.perf_counter()
+        self._lazy_load()
+        if self._model is None:
+            error_detail = self._load_error or "unknown adapter load error"
+            raise RuntimeError(f"{self.model_name} unavailable: {error_detail}")
+
+        input_tensor = torch.from_numpy(face_tensor).float().unsqueeze(0).unsqueeze(0)
+        # Match training-time normalization from data_loader.py
+        input_tensor = (input_tensor - 0.5) / 0.5
+
+        with torch.no_grad():
+            logits = self._model(input_tensor)
+            probs = torch.softmax(logits, dim=1).cpu().numpy()[0]
+
+        class_id = int(np.argmax(probs))
+        latency_ms = (time.perf_counter() - start) * 1000
+        return PredictionResult(
+            class_id=class_id,
+            label=self.class_order[class_id],
+            confidence=float(probs[class_id]),
+            probs=[float(x) for x in probs],
+            latency_ms=float(latency_ms),
+            model_name=self.model_name,
+        )
+
+
 @st.cache_resource
 def get_adapter_registry() -> Dict[str, BaseAdapter]:
-    return {
-        "HOG+SVM": HOGSVMAdapter(),
-        "SimpleCNN": CNNStyleAdapter("SimpleCNN (integration placeholder)", seed=23, scale=0.65),
-        "LiteCNN": CNNStyleAdapter("LiteCNN (integration placeholder)", seed=47, scale=0.60),
-    }
+    registry: Dict[str, BaseAdapter] = {}
+
+    hog_artifact = Path("saved_models") / "hog_svm_artifact.pkl"
+    if hog_artifact.exists():
+        registry["HOG+SVM"] = HOGArtifactAdapter(artifact_path=hog_artifact)
+    else:
+        registry["HOG+SVM"] = HOGSVMAdapter()
+
+    simple_ckpt = Path("saved_models") / "SimpleCNN_best.pth"
+    lite_ckpt = Path("saved_models") / "LiteCNN_best.pth"
+
+    if TORCH_MODELS_AVAILABLE and simple_ckpt.exists():
+        registry["SimpleCNN"] = TorchCheckpointAdapter(
+            model_name="SimpleCNN (checkpoint)",
+            model_family="simplecnn",
+            model_cls=SimpleCNN,
+            checkpoint_path=simple_ckpt,
+        )
+    else:
+        registry["SimpleCNN"] = CNNStyleAdapter(
+            "SimpleCNN (fallback placeholder)", seed=23, scale=0.65
+        )
+
+    if TORCH_MODELS_AVAILABLE and lite_ckpt.exists():
+        registry["LiteCNN"] = TorchCheckpointAdapter(
+            model_name="LiteCNN (checkpoint)",
+            model_family="litecnn",
+            model_cls=LiteCNN,
+            checkpoint_path=lite_ckpt,
+        )
+    else:
+        registry["LiteCNN"] = CNNStyleAdapter(
+            "LiteCNN (fallback placeholder)", seed=47, scale=0.60
+        )
+
+    return registry
 
 
 def preprocess_image_to_face_tensor(image: Image.Image) -> np.ndarray:
@@ -425,8 +605,8 @@ def main() -> None:
             reset_live_runtime_state()
 
     st.info(
-        "Current adapters are integration placeholders. "
-        "Model owners can replace adapter internals while keeping the same output schema."
+        "SimpleCNN/LiteCNN now use checkpoint adapters when available in saved_models/. "
+        "If checkpoint loading fails, the app automatically falls back to placeholder adapters."
     )
 
     st.caption(
