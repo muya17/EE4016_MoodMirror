@@ -14,7 +14,7 @@ from skimage.feature import hog
 
 try:
     import torch
-    from src.models import LiteCNN, SimpleCNN
+    from src.models import CLCM, LiteCNN, SimpleCNN
 
     TORCH_MODELS_AVAILABLE = True
 except ImportError:
@@ -288,6 +288,7 @@ def get_adapter_registry() -> Dict[str, BaseAdapter]:
 
     simple_ckpt = Path("saved_models") / "SimpleCNN_best.pth"
     lite_ckpt = Path("saved_models") / "LiteCNN_best.pth"
+    clcm_ckpt = Path("saved_models") / "clcm_best_weights.pth"
 
     if TORCH_MODELS_AVAILABLE and simple_ckpt.exists():
         registry["SimpleCNN"] = TorchCheckpointAdapter(
@@ -311,6 +312,18 @@ def get_adapter_registry() -> Dict[str, BaseAdapter]:
     else:
         registry["LiteCNN"] = CNNStyleAdapter(
             "LiteCNN (fallback placeholder)", seed=47, scale=0.60
+        )
+
+    if TORCH_MODELS_AVAILABLE and clcm_ckpt.exists():
+        registry["CLCM"] = TorchCheckpointAdapter(
+            model_name="CLCM (checkpoint)",
+            model_family="clcm",
+            model_cls=CLCM,
+            checkpoint_path=clcm_ckpt,
+        )
+    else:
+        registry["CLCM"] = CNNStyleAdapter(
+            "CLCM (fallback placeholder)", seed=61, scale=0.58
         )
 
     return registry
@@ -576,13 +589,15 @@ def run_single_image_inference(image: Image.Image, selected_model_key: str) -> N
 def main() -> None:
     st.set_page_config(page_title="MoodMirror FER Demo", layout="centered")
     st.title("MoodMirror: Facial Expression Recognition Demo")
-    st.write("Integration-ready UI for HOG+SVM, SimpleCNN, and LiteCNN adapters.")
+    st.write("Integration-ready UI for HOG+SVM, SimpleCNN, LiteCNN, and CLCM adapters.")
 
     init_session_state()
 
     with st.sidebar:
         st.header("Settings")
-        selected_model = st.selectbox("Model", ["HOG+SVM", "SimpleCNN", "LiteCNN"], index=2)
+        model_options = list(get_adapter_registry().keys())
+        default_index = model_options.index("LiteCNN") if "LiteCNN" in model_options else 0
+        selected_model = st.selectbox("Model", model_options, index=default_index)
         input_source = st.radio("Input source", ["Image Upload", "Webcam Snapshot", "Live Video"], index=0)
 
         sampling_mode = "Timed"
@@ -605,7 +620,7 @@ def main() -> None:
             reset_live_runtime_state()
 
     st.info(
-        "SimpleCNN/LiteCNN now use checkpoint adapters when available in saved_models/. "
+        "SimpleCNN/LiteCNN/CLCM now use checkpoint adapters when available in saved_models/. "
         "If checkpoint loading fails, the app automatically falls back to placeholder adapters."
     )
 

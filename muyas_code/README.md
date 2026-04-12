@@ -51,16 +51,29 @@ We use the **FER2013** facial expression dataset for training and evaluation.
 - You may need a Kaggle account to download the dataset files.
 
 ## Run Demo App
-1. Install dependencies:
+1. From the project root, use the one-command run script:
    ```bash
-   pip install -r requirements.txt
+   bash run_app.sh
    ```
-2. Run Streamlit app:
+
+2. Manual equivalent (create/open venv, install, run app):
    ```bash
-   streamlit run demo_app.py
+   cd /home/muya/Desktop/EE4016/EE4016_MoodMirror
+   if [ ! -d .venv ]; then python3 -m venv .venv; fi
+   source .venv/bin/activate
+   python -m pip install --upgrade pip
+   python -m pip install -r requirements.txt
+   python -m streamlit run demo_app.py --server.headless true --server.port 8502
    ```
 
 Live video mode requires browser camera permissions and uses `streamlit-webrtc`.
+
+## Models Used In App Integration
+- HOG+SVM artifact: `saved_models/hog_svm_artifact.pkl`
+- SimpleCNN checkpoint: `saved_models/SimpleCNN_best.pth`
+- LiteCNN checkpoint: `saved_models/LiteCNN_best.pth`
+
+Note: CLCM is now also wired into `demo_app.py` as an optional model, loaded from `saved_models/clcm_best_weights.pth` when present.
 
 ## Demo Preview
 The Streamlit integration app is ready for team integration.

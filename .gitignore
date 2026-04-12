@@ -9,5 +9,9 @@ fer2013.csv
 __pycache__/
 *.pyc
 
+# Ignore local environments and working folders
+.venv/
+m4/
+
 # Ignore my local notes file
 zachs_addition_notes.md
