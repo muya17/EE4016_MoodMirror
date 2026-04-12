@@ -56,12 +56,19 @@ def train_model():
     else:
         device = torch.device("cpu")
         print("USING CPU (Training will be slower).")
+
+    use_cuda = device.type == "cuda"
+    scaler = torch.cuda.amp.GradScaler(enabled=use_cuda)
     
     os.makedirs(SAVE_DIR, exist_ok=True)
     
     # 2. Load Data Pipeline (M2's Masterpiece)
     print("\nLoading Datasets...")
-    train_loader, val_loader, test_loader = get_dataloaders(DATA_PATH, BATCH_SIZE)
+    train_loader, val_loader, test_loader = get_dataloaders(
+        DATA_PATH,
+        BATCH_SIZE,
+        pin_memory=use_cuda,
+    )
     print(f"Train batches: {len(train_loader)}")
     print(f"Val batches:   {len(val_loader)}")
     print(f"Test batches:  {len(test_loader)}")
@@ -107,22 +114,25 @@ def train_model():
         
         for inputs, labels in train_loader:
             # Move data to the same device as the model (e.g., MPS/CUDA)
-            inputs, labels = inputs.to(device), labels.to(device)
+            inputs = inputs.to(device, non_blocking=use_cuda)
+            labels = labels.to(device, non_blocking=use_cuda)
             
             # Zero the parameter gradients (prevent accumulation from previous batch)
             optimizer.zero_grad()
             
             # Forward pass: compute model predictions
-            outputs = model(inputs)
-            
-            # Compute loss between predictions and ground truth labels
-            loss = criterion(outputs, labels)
+            with torch.cuda.amp.autocast(enabled=use_cuda):
+                outputs = model(inputs)
+                
+                # Compute loss between predictions and ground truth labels
+                loss = criterion(outputs, labels)
             
             # Backward pass: compute gradients
-            loss.backward()
+            scaler.scale(loss).backward()
             
             # Optimize: update model weights
-            optimizer.step()
+            scaler.step(optimizer)
+            scaler.update()
             
             # Statistics for tracking training accuracy
             running_loss += loss.item() * inputs.size(0)

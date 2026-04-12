@@ -146,7 +146,7 @@ class FER2013Dataset(Dataset):
         return image, label
 
 
-def get_dataloaders(csv_path, batch_size=64):
+def get_dataloaders(csv_path, batch_size=64, num_workers=2, pin_memory=False):
     """
     Main interface to get DataLoaders for Training, Validation, and Testing.
     """
@@ -168,9 +168,15 @@ def get_dataloaders(csv_path, batch_size=64):
     val_dataset = FER2013Dataset(csv_path, split='PublicTest', transform=test_transforms)
     test_dataset = FER2013Dataset(csv_path, split='PrivateTest', transform=test_transforms)
 
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=2)
-    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=2)
-    test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=2)
+    loader_kwargs = {
+        "batch_size": batch_size,
+        "num_workers": num_workers,
+        "pin_memory": pin_memory,
+    }
+
+    train_loader = DataLoader(train_dataset, shuffle=True, **loader_kwargs)
+    val_loader = DataLoader(val_dataset, shuffle=False, **loader_kwargs)
+    test_loader = DataLoader(test_dataset, shuffle=False, **loader_kwargs)
 
     return train_loader, val_loader, test_loader
 

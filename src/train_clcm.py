@@ -1,6 +1,9 @@
 # src/train_clcm.py
 import os
 import time
+import argparse
+import random
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -21,7 +24,36 @@ LEARNING_RATE = 0.001
 WEIGHT_DECAY = 1e-4  # L2 Regularization to prevent overfitting
 SAVE_DIR = 'saved_models'
 
-def train_model():
+
+def set_random_seed(seed):
+    """Set seeds for reproducible training runs."""
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
+
+    os.environ["PYTHONHASHSEED"] = str(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
+def evaluate_accuracy(model, data_loader, device):
+    """Compute accuracy (%) for a model on a dataloader."""
+    model.eval()
+    correct = 0
+    total = 0
+    with torch.no_grad():
+        for inputs, labels in data_loader:
+            inputs, labels = inputs.to(device), labels.to(device)
+            outputs = model(inputs)
+            _, predicted = torch.max(outputs, 1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+    return (correct / total) * 100 if total > 0 else 0.0
+
+
+def train_model(epochs=EPOCHS, resume_best=False, seed=42):
     """
     Main training loop for the CLCM architecture.
     Features: MPS acceleration, LR scheduling, and best-model checkpointing.
@@ -37,6 +69,9 @@ def train_model():
     else:
         device = torch.device("cpu")
         print("USING CPU (Training will be slower).")
+
+    set_random_seed(seed)
+    print(f"Using fixed random seed: {seed}")
 
     os.makedirs(SAVE_DIR, exist_ok=True)
 
@@ -64,9 +99,17 @@ def train_model():
     best_val_acc = 0.0
     best_model_path = os.path.join(SAVE_DIR, 'clcm_best_weights.pth')
 
+    if resume_best and os.path.exists(best_model_path):
+        print(f"\nResuming from existing best weights: {best_model_path}")
+        model.load_state_dict(torch.load(best_model_path, map_location=device))
+        best_val_acc = evaluate_accuracy(model, val_loader, device)
+        print(f"Current validation accuracy of resumed model: {best_val_acc:.2f}%")
+    elif resume_best:
+        print(f"\nResume requested, but no checkpoint found at {best_model_path}. Starting fresh.")
+
     # 4. The Training Loop
     print("\nSTARTING TRAINING LOOP...")
-    for epoch in range(EPOCHS):
+    for epoch in range(epochs):
         start_time = time.time()
         
         # --- TRAINING PHASE ---
@@ -126,7 +169,7 @@ def train_model():
         epoch_time = time.time() - start_time
 
         # --- PRINT EPOCH SUMMARY ---
-        print(f"Epoch [{epoch+1:02d}/{EPOCHS}] "
+          print(f"Epoch [{epoch+1:02d}/{epochs}] "
               f"Time: {epoch_time:.1f}s | "
               f"Train Loss: {epoch_train_loss:.4f} - Train Acc: {epoch_train_acc:.2f}% | "
               f"Val Loss: {epoch_val_loss:.4f} - Val Acc: {epoch_val_acc:.2f}%")
@@ -151,7 +194,7 @@ def train_model():
     best_model = CLCM(num_classes=7).to(device)
 
     # 2. Load the best saved weights from the training/validation phase
-    best_model.load_state_dict(torch.load(best_model_path))
+    best_model.load_state_dict(torch.load(best_model_path, map_location=device))
     
     # 3. Set the model to evaluation mode (disables Dropout, fixes BatchNorm)
     best_model.eval()
@@ -180,4 +223,14 @@ def train_model():
     print("="*50 + "\n")
 
 if __name__ == '__main__':
-    train_model()
+    parser = argparse.ArgumentParser(description='Train CLCM on FER2013.')
+    parser.add_argument('--epochs', type=int, default=EPOCHS, help='Number of epochs to train.')
+    parser.add_argument('--seed', type=int, default=42, help='Fixed random seed for reproducibility.')
+    parser.add_argument(
+        '--resume-best',
+        action='store_true',
+        help='Resume training from saved_models/clcm_best_weights.pth if it exists.'
+    )
+    args = parser.parse_args()
+
+    train_model(epochs=args.epochs, resume_best=args.resume_best, seed=args.seed)

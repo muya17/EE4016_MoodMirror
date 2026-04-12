@@ -1,0 +1,13 @@
+# Ignore Mac system files
+.DS_Store
+
+# Ignore datasets and large local data folders
+data/
+fer2013.csv
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+
+# Ignore my local notes file
+zachs_addition_notes.md
