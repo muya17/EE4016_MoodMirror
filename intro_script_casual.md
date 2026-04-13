@@ -2,7 +2,9 @@
 
 Hey everyone, I am Zach, and this is MoodMirror by Group 10.
 
-Quick setup before we start: I will show 3 images with the same text reply, like "I am good". One image has a smile, one looks sad, one looks confused. Same words, completely different meaning.
+Quick setup before we start: I will show one simple visual with the same person in three expressions. Top left, there is a speech bubble that says, "How is uni going?" Then the same person replies three different ways: happy, tired or sleepy, and confused.
+
+The point is simple: even with the same words, facial expression changes the meaning a lot. You can say, "University is so fun. I love my 9AM classes," but the face tells the real story.
 
 See? No one needed subtitles. Faces are basically high-speed human communication.
 
@@ -20,4 +22,4 @@ In this project, we built multiple FER pipelines, compared them properly, and in
 
 So today, we will take you through what we built, what worked, what did not, and then show the live demo.
 
-If the demo behaves, we look smart. If not, we call it a stress test.
+If the demo behaves, we look smart. If not, we call it a stress test. Hopefully, you won't read our faces as stressed. 
