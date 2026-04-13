@@ -38,6 +38,8 @@ EMOTIONS: List[str] = [
     "neutral",
 ]
 
+APP_DIR = Path(__file__).resolve().parent
+
 
 @dataclass
 class PredictionResult:
@@ -280,15 +282,15 @@ class TorchCheckpointAdapter(BaseAdapter):
 def get_adapter_registry() -> Dict[str, BaseAdapter]:
     registry: Dict[str, BaseAdapter] = {}
 
-    hog_artifact = Path("saved_models") / "hog_svm_artifact.pkl"
+    hog_artifact = APP_DIR / "saved_models" / "hog_svm_artifact.pkl"
     if hog_artifact.exists():
         registry["HOG+SVM"] = HOGArtifactAdapter(artifact_path=hog_artifact)
     else:
         registry["HOG+SVM"] = HOGSVMAdapter()
 
-    simple_ckpt = Path("saved_models") / "SimpleCNN_best.pth"
-    lite_ckpt = Path("saved_models") / "LiteCNN_best.pth"
-    clcm_ckpt = Path("saved_models") / "clcm_best_weights.pth"
+    simple_ckpt = APP_DIR / "saved_models" / "SimpleCNN_best.pth"
+    lite_ckpt = APP_DIR / "saved_models" / "LiteCNN_best.pth"
+    clcm_ckpt = APP_DIR / "saved_models" / "clcm_best_weights.pth"
 
     if TORCH_MODELS_AVAILABLE and simple_ckpt.exists():
         registry["SimpleCNN"] = TorchCheckpointAdapter(
