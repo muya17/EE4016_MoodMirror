@@ -1,0 +1,83 @@
+To help you replicate this document, I have provided a detailed structural description for a LaTeX prompt and a converted Markdown version.
+
+1. LaTeX Structural Description
+
+To replicate this document in LaTeX, use the following description to guide an AI:
+
+Document Class & Layout: Use a report or article class on A4 paper. The document features a clean, professional header with the university name (Université Laval) and lab name (NOR Lab).
+
+
+
+Title Page Elements: * A top-aligned logo or text block for the University.
+
+A bold, centered "TECHNICAL REPORT" label.
+
+A specific section for a descriptive title followed by author names and the date.
+
+Revision History Table: Create a three-column table (Version, Date, Comments) using tabular or tabularx. Use thin horizontal lines (\hline or booktabs package) for separation .
+
+
+
+Abstract Section: A standard abstract environment or a centered heading followed by a block of text.
+
+Notation & Tables (Crucial): * Table 1 (General Symbols): A two-column table for "Symbol" and "Explanation." Symbols should be in math mode (e.g., $a$, $v$, $||v||_2$).
+
+Table 2 (Registration Symbols): A more complex two-column table. Some rows require multiple lines within a single cell for definitions of point clouds ($P$, $\mathcal{P}$, $p_i$).
+
+
+
+Table 3 (Functions): A two-column table specifically for function notation like $T(x, p)$ and $match(\mathcal{P}, \mathcal{Q})$.
+
+
+
+Headers/Footers: The document uses a simple header containing the "Descriptive Title" and a footer containing the page count in the format "X/4".
+
+Sectioning: Use \section{...} for technical content headings. Ensure bibliography support is included to handle citations like Pomerleau2013.
+
+
+Instuctions from Prof Below:
+
+Final Technical Report and Deliverables (Week 14)
+Due: Apr 25, 2026 | Upcoming
+Minimum 25-page final report following technical report structure.
+
+Required Submissions:
+Final technical report (PDF) - 25+ pages minimum
+PowerPoint presentation file
+Python source code
+3-4 minute demo video summary
+Appendix A: Individual Contributions Report
+Template Technical Report(https://github.com/norlab-ulaval/template-technicalReport): Use this technical report template with LaTex. Must include Appendix A for individual contributions assessment.
+
+Project Hints and Resources
+Key Principles
+Your passion is your compass - Choose topics that excite you
+Quality standard - Aim for publishable quality work
+AI tools - Use Elicit, SciSpace, Consensus, NotebookLM for research
+Academic resources - Use Google Scholar for literature review
+Dataset considerations - Plan data collection/preprocessing time carefully
+
+
+April 21, 2026 : Group Project Final Report Submission (Reminder)
+I would like to remind that the deadline for the final report submission of Group Project is April 25, 2026 (Week 14). Here are the details of the requirements for the final report submission:
+
+The final project report is expected to be a minimum of 25 pages in length.
+Use this technical report template with LaTex.
+Technical Report TemplateLinks to an external site..
+Your final report must include Appendix A , titled "Individual Contributions of the Group Project." This appendix is a dedicated section where students provide detailed information about each team member's contributions to the group project. Specifically, it should describe each member's responsibilities, the tasks they completed, and the outcomes they achieved. This appendix is critical for evaluating individual performance within the group project and is necessary to meet the professional accreditation requirements of the course.
+Demo VideoLinks to an external site. is required to be a 3-4 minute summary of the project.
+Students are also required to submit the Python source code of any implementation and PPT of the oral presentation for assessment.
+All the PPT, Final Report and Source Code are required to submit to CANVAS Group Project Final Report as a single zip file.
+
+Mar. 29, 2026 : Group Project Final Report Submission
+I would like to remind that the deadline for the final report submission of Group Project is April 25, 2026 (Week 14). Here are the details of the requirements for the final report submission:
+
+The final project report is expected to be a minimum of 25 pages in length.
+Use this technical report template with LaTex. 
+Technical Report.
+Your final report must include Appendix A , titled "Individual Contributions of the Group Project." This appendix is a dedicated section where students provide detailed information about each team member's contributions to the group project. Specifically, it should describe each member's responsibilities, the tasks they completed, and the outcomes they achieved. This appendix is critical for evaluating individual performance within the group project and is necessary to meet the professional accreditation requirements of the course.
+Demo Video
+ is required to be a 3-4 minute summary of the project.
+Students are also required to submit the Python source code of any implementation and PPT of the oral presentation for assessment.
+All the PPT, Final Report and Source Code are required to submit to CANVAS Group Project Final Report as a single zip file.
+This topic is closed for comments.

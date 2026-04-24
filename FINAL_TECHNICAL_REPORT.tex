@@ -1,0 +1,497 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{caption}
+\usepackage{enumitem}
+
+\setlength{\parskip}{0.5em}
+\setlength{\parindent}{0pt}
+\setlength{\headheight}{15pt}
+\onehalfspacing
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{MoodMirror Final Technical Report}
+\rhead{EE4016 Group 10}
+\cfoot{\thepage}
+
+\begin{document}
+
+\pagenumbering{gobble}
+
+% -------------------- Title Page --------------------
+\begin{titlepage}
+\centering
+
+{\Large TECHNICAL REPORT\par}
+\vspace{1.2cm}
+
+{\LARGE\bfseries MoodMirror: Lightweight Facial Expression Recognition with Convolutional Neural Networks for FER2013\par}
+\vspace{1cm}
+
+{\large EE4016 Group Project\par}
+\vspace{0.4cm}
+
+{\large City University of Hong Kong\par}
+{\large Group 10\par}
+{\large Final Technical Report\par}
+\vspace{0.6cm}
+
+{\large Due Date: April 25, 2026\par}
+{\large Draft Date: April 24, 2026\par}
+\vspace{1.2cm}
+
+{\large\bfseries Authors\par}
+\vspace{0.5cm}
+
+{\large KAPYA Zachariah Muya (Leader) [58494409]\par}
+{\large WANG Xinan [58521809]\par}
+{\large Cheng Wing Yan [58532928]\par}
+{\large YIP Chung Hon [58737067]\par}
+{\large Sit Yan Tung [57850588]\par}
+
+\vfill
+\end{titlepage}
+
+\clearpage
+\pagenumbering{arabic}
+
+% -------------------- Revision History --------------------
+\section*{Revision History}
+\addcontentsline{toc}{section}{Revision History}
+
+\begin{table}[h!]
+\centering
+\begin{tabularx}{\textwidth}{@{}l l X@{}}
+\toprule
+Version & Date & Comments \\
+\midrule
+0.1 & 2026-04-12 & Integration snapshot prepared on presentation branch \\
+0.2 & 2026-04-24 & Verified rerun of saved model artifacts on current dataset split \\
+1.0 & 2026-04-24 & Publication-ready narrative draft with appendix and formal structure \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\newpage
+\tableofcontents
+\newpage
+
+% -------------------- Abstract --------------------
+\begin{abstract}
+This report presents MoodMirror, a lightweight facial expression recognition system that classifies seven emotions from FER2013 grayscale facial images. The design goal is to provide a practical middle ground between two extremes: very large models that can perform strongly on FER benchmarks but are computationally expensive, and very small lightweight models that are efficient but often suffer noticeable performance degradation. In particular, this project targets realistic household and ordinary PC deployment, so model quality is evaluated together with CPU inference practicality rather than accuracy alone.
+
+To realize this objective, we compare three principal paths: HOG plus SVM as the classical baseline, SimpleCNN as the deep learning baseline, and LiteCNN as the proposed lightweight architecture, with a CLCM-style model used as the replication comparison baseline. The integrated pipeline includes a unified data loader, reproducible training and evaluation scripts, model artifact loading, and a Streamlit-based demonstration interface supporting image upload, webcam snapshot, and live video inference with intelligent sampling.
+
+On currently verified repository artifacts, test accuracy results are 43.23\% for HOG plus SVM, 60.39\% for CLCM, and 65.88\% for LiteCNN. LiteCNN remains within the project parameter budget at 900,903 trainable parameters and outperforms CLCM by 5.49 percentage points on test accuracy in the present checkpoint set. This aligns with the proposal direction: exceed CLCM performance while staying under the predefined lightweight parameter threshold so deployment remains feasible on an ordinary CPU-based system.
+
+The report documents achieved outcomes, unresolved gaps, and final submission readiness. Core goals for integration and comparative benchmarking are met. Remaining optimization work is centered on freezing a reproducible LiteCNN checkpoint at or above the 70\% target and completing final standardized latency and ablation tables under controlled hardware conditions.
+\end{abstract}
+
+\section{Introduction}
+
+\subsection{Motivation}
+Facial expression recognition remains a challenging visual classification problem due to intra-class variation, inter-class ambiguity, illumination changes, and occlusions. In education and practical deployment contexts, model design must balance predictive performance against computational efficiency. The project therefore targets lightweight architectures suitable for CPU-constrained use while preserving competitive recognition quality.
+
+\subsection{Problem Statement}
+Given an input face image, predict one of seven emotion classes:
+\begin{itemize}[leftmargin=*]
+    \item angry
+    \item disgust
+    \item fear
+    \item happy
+    \item sad
+    \item surprise
+    \item neutral
+\end{itemize}
+
+\subsection{Project Objectives}
+From the approved proposal, objectives are:
+\begin{itemize}[leftmargin=*]
+    \item O1: Build a complete FER pipeline (preprocessing, training, evaluation, and demo)
+    \item O2: Establish HOG plus SVM and SimpleCNN baselines
+    \item O3: Build LiteCNN with less than 1.5M parameters, less than 10 ms CPU inference target, and at least 70\% accuracy target
+    \item O4: Conduct ablation-guided optimization analysis
+    \item O5: Deliver an interactive demonstration interface with intelligent webcam sampling
+    \item O6: Beat the CLCM lightweight baseline
+\end{itemize}
+
+\subsection{Contributions of This Report}
+This document contributes:
+\begin{itemize}[leftmargin=*]
+    \item A publication-style narrative aligned to technical report conventions
+    \item Verified benchmark results from current saved artifacts
+    \item Explicit objective mapping from planned targets to achieved outcomes
+    \item A complete Appendix A for individual contribution reporting
+\end{itemize}
+
+\section{Report Conventions and Notation}
+
+\subsection{General Symbols}
+\begin{table}[h!]
+\centering
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+Symbol & Explanation \\
+\midrule
+$N$ & Number of samples \\
+$C$ & Number of classes ($C = 7$) \\
+$x$ & Input image tensor \\
+$y$ & Ground-truth class label \\
+$\hat{y}$ & Predicted class label \\
+$\theta$ & Trainable model parameters \\
+$L$ & Training loss \\
+$p(y=c\mid x)$ & Predicted probability of class $c$ \\
+Acc & Classification accuracy \\
+$F1_{macro}$ & Macro-averaged F1 score \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Dataset and Split Symbols}
+\begin{table}[h!]
+\centering
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+Symbol & Explanation \\
+\midrule
+$D_{train}$ & Training split data \\
+$D_{val}$ & Validation split data \\
+$D_{test}$ & Test split data \\
+$E$ & Epoch count \\
+$B$ & Batch size \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Function Notation}
+\begin{table}[h!]
+\centering
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+Function & Meaning \\
+\midrule
+$f_\theta(x)$ & Model forward pass producing logits \\
+$softmax(z)$ & Probability normalization of logits \\
+$argmax(p)$ & Predicted class index from probability vector \\
+$M(\theta, D)$ & Evaluation of model $M$ with parameters $\theta$ on dataset $D$ \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Project Organization and Integration Evidence}
+
+\subsection{Branch Consolidation}
+The final working branch is presentation, consolidating source contributions from:
+\begin{itemize}[leftmargin=*]
+    \item annie\_m2\_code
+    \item jasmine\_code
+    \item master
+    \item muyas\_code
+\end{itemize}
+Repository branch inventory additionally includes remote branches for M4 and M5 paths, while integrated root-level evidence is captured in the merged branch.
+
+\subsection{Merge Governance}
+A conflict-safe manifest was used to preserve reproducibility:
+\begin{itemize}[leftmargin=*]
+    \item Unique paths promoted to root
+    \item Conflicting files explicitly tracked and resolved
+\end{itemize}
+Conflicting file categories included repository configuration and core model dependency definitions.
+
+\subsection{Integrated Artifact Set}
+The consolidated implementation includes:
+\begin{itemize}[leftmargin=*]
+    \item Unified model definitions and training scripts
+    \item Shared FER2013 folder-aware data loader
+    \item HOG artifact training and loading path
+    \item Demo application with model-agnostic adapter registry
+    \item Frozen model artifacts for benchmark and demo use
+\end{itemize}
+
+\section{Data, Preprocessing, and Experimental Protocol}
+
+\subsection{Dataset}
+The project uses FER2013 in folder form:
+\begin{itemize}[leftmargin=*]
+    \item data/fer2013/train by class
+    \item data/fer2013/test by class
+\end{itemize}
+The current test set used in verified evaluation contains 7,178 samples.
+
+\subsection{Preprocessing Pipeline}
+Training-time augmentation includes:
+\begin{itemize}[leftmargin=*]
+    \item random horizontal flipping
+    \item bounded rotation
+    \item affine translation
+    \item mild brightness and contrast jitter
+\end{itemize}
+Inference-time preprocessing includes:
+\begin{itemize}[leftmargin=*]
+    \item grayscale normalization
+    \item resize to 48 by 48
+    \item tensor conversion and normalization with mean 0.5 and std 0.5
+\end{itemize}
+
+\subsection{Evaluation Metrics}
+Primary metrics:
+\begin{itemize}[leftmargin=*]
+    \item test accuracy
+    \item macro F1
+\end{itemize}
+Secondary deployment metrics:
+\begin{itemize}[leftmargin=*]
+    \item trainable parameter count
+    \item average inference latency
+\end{itemize}
+
+\subsection{Evidence Classification}
+To maintain publication-level integrity, results are reported as:
+\begin{itemize}[leftmargin=*]
+    \item Verified current results: direct rerun on present saved artifacts
+    \item Historical reported values: documented from earlier runs and notes
+\end{itemize}
+Only verified current results are used for final claim tables in this draft.
+
+\section{Methods}
+
+\subsection{HOG plus SVM Baseline}
+The classical baseline extracts HOG descriptors and trains a linear SVM classifier. This baseline anchors performance against non-deep-learning approaches and supports confusion matrix analysis and macro F1 reporting.
+
+\subsection{SimpleCNN Baseline}
+SimpleCNN is a four-block convolutional architecture with batch normalization, pooling, and dropout regularization, followed by global average pooling and a linear classifier.
+
+Trainable parameters: 390,599.
+
+\subsection{LiteCNN Proposed Model}
+LiteCNN uses residual depthwise-separable blocks for computational efficiency while retaining representational depth. The architecture progressively expands channels and uses a lightweight classifier head.
+
+Trainable parameters: 900,903.
+
+\subsection{CLCM Replication Baseline}
+The CLCM path provides a lightweight replication baseline for objective O6 comparison.
+
+Trainable parameters: 117,383.
+
+\section{System Integration and Demo Architecture}
+
+\subsection{Unified Adapter Contract}
+The application integrates all model families through a single prediction contract containing:
+\begin{itemize}[leftmargin=*]
+    \item class index
+    \item class label
+    \item confidence
+    \item class probability vector
+    \item inference latency
+    \item model identity
+\end{itemize}
+This decouples frontend behavior from model internals and significantly reduces integration risk.
+
+\subsection{Input Modes}
+The deployed demo supports:
+\begin{itemize}[leftmargin=*]
+    \item image upload inference
+    \item webcam snapshot inference
+    \item live video inference via streamlit-webrtc
+\end{itemize}
+
+\subsection{Intelligent Sampling for Live Inference}
+For webcam and live video, the system supports:
+\begin{itemize}[leftmargin=*]
+    \item timed inference mode
+    \item change-triggered mode using L2 frame difference
+\end{itemize}
+Runtime counters expose practical deployment behavior:
+\begin{itemize}[leftmargin=*]
+    \item total frames
+    \item inference calls
+    \item skipped frames
+    \item estimated inference reduction percentage
+\end{itemize}
+
+\section{Results}
+
+\subsection{Verified Current Benchmark Table}
+All values below were re-evaluated on April 24, 2026 using current model artifacts under the integrated environment.
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabularx}{\textwidth}{@{}X r r r r X@{}}
+\toprule
+Model & Test Accuracy (\%) & Macro F1 & Parameters & Avg Latency (ms/sample) & Evidence Status \\
+\midrule
+HOG plus SVM artifact & 43.23 & 0.3803 & N/A & N/A & Verified current \\
+SimpleCNN checkpoint & 25.65 & 0.0840 & 390,599 & 1.05 & Verified current \\
+LiteCNN checkpoint & 65.88 & 0.6340 & 900,903 & 9.48 & Verified current \\
+CLCM checkpoint & 60.39 & 0.5268 & 117,383 & 2.15 & Verified current \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Comparative Interpretation}
+\begin{itemize}[leftmargin=*]
+    \item LiteCNN is the strongest current checkpoint and exceeds CLCM by 5.49 percentage points on test accuracy.
+    \item LiteCNN remains under the 1.5M parameter budget.
+    \item Current SimpleCNN checkpoint performance is substantially below historical notes, indicating checkpoint lineage or compatibility drift that should be reconciled before final archival claims.
+\end{itemize}
+
+\subsection{Historical Context (Non-claim Support)}
+Project notes and earlier run summaries include historical values near:
+\begin{itemize}[leftmargin=*]
+    \item SimpleCNN: about 63\% test
+    \item LiteCNN: about 66\% test
+\end{itemize}
+These values are useful context but are not treated as final claims unless reproduced from the frozen final artifact set.
+
+\section{Objective Achievement Matrix}
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabularx}{\textwidth}{@{}l l l X@{}}
+\toprule
+Objective & Requirement & Status & Evidence-Based Comment \\
+\midrule
+O1 & End-to-end pipeline & Achieved & Data loader, training, evaluation, and demo are all integrated \\
+O2 & Baseline establishment & Achieved & HOG plus SVM and SimpleCNN paths implemented and runnable \\
+O3 & LiteCNN target package & Partially achieved & Parameter budget met; current accuracy below 70\%; latency near target in measured run \\
+O4 & Ablation quantification & Partial & Ablation-ready scripts and configs exist; final controlled table still needed \\
+O5 & Interactive demo with smart sampling & Achieved & Upload, webcam, and live video with sampling controls are implemented \\
+O6 & Beat CLCM & Achieved & LiteCNN current test accuracy exceeds CLCM current test accuracy \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Discussion}
+
+\subsection{What Was Achieved Well}
+The strongest success is engineering integration quality. The system demonstrates consistent data handling, unified adapter design, artifact-backed model loading, and deployment-oriented sampling in a single app workflow. This directly supports reproducibility and presentation reliability.
+
+\subsection{Remaining Scientific and Reporting Gaps}
+Three finalization gaps remain before report freeze:
+\begin{itemize}[leftmargin=*]
+    \item freeze a fully reproducible LiteCNN checkpoint at or above the 70\% target
+    \item reconcile SimpleCNN historical versus current artifact discrepancy
+    \item finalize ablation and latency reporting under one controlled protocol
+\end{itemize}
+
+\subsection{Threats to Validity}
+Potential threats include:
+\begin{itemize}[leftmargin=*]
+    \item checkpoint provenance mismatch
+    \item hardware-dependent latency variation
+    \item split or preprocessing drift across separate branch-era runs
+\end{itemize}
+These are manageable with final artifact freeze and documented rerun scripts.
+
+\section{Conclusion}
+MoodMirror delivers a complete lightweight FER pipeline from model development to integrated application deployment. In current verified evaluation, LiteCNN outperforms the CLCM baseline while satisfying parameter-budget constraints, and the demo system is fully operational across all required interaction modes.
+
+The final optimization objective is to close the remaining accuracy gap to the 70\% target under a frozen and reproducible final checkpoint set. With this final step and completed controlled ablation tables, the project is positioned for a strong final technical submission.
+
+\section{Compliance with Final Deliverable Requirements}
+Professor-required items and current status:
+\begin{itemize}[leftmargin=*]
+    \item Final technical report (minimum 25 pages): this draft provides full structured content for LaTeX expansion and formatting
+    \item PowerPoint presentation: to be finalized with benchmark and architecture visuals
+    \item Python source code: available in repository
+    \item Demo video (3 to 4 minutes): app supports full demonstration flow
+    \item Appendix A individual contributions: included below
+    \item Single zip bundle for Canvas: pending final packaging
+\end{itemize}
+
+\section*{References}
+\addcontentsline{toc}{section}{References}
+\begin{enumerate}[leftmargin=*]
+    \item I. Goodfellow, Y. Bengio, and A. Courville, \textit{Deep Learning}, MIT Press, 2016.
+    \item Y. LeCun, Y. Bengio, and G. Hinton, Deep learning, \textit{Nature}, 2015.
+    \item N. Dalal and B. Triggs, Histograms of oriented gradients for human detection, CVPR, 2005.
+    \item C. Cortes and V. Vapnik, Support-vector networks, \textit{Machine Learning}, 1995.
+    \item A. Krizhevsky, I. Sutskever, and G. Hinton, ImageNet classification with deep convolutional neural networks, NIPS, 2012.
+    \item A. Howard et al., MobileNets: Efficient convolutional neural networks for mobile vision applications, 2017.
+    \item M. C. Gursesli et al., Facial Emotion Recognition Through Custom Lightweight CNN Model, \textit{IEEE Access}, 2024, doi:10.1109/ACCESS.2024.3380847.
+    \item K. He et al., Deep residual learning for image recognition, CVPR, 2016.
+    \item F. Chollet, Xception: Deep learning with depthwise separable convolutions, CVPR, 2017.
+    \item D. P. Kingma and J. Ba, Adam: A method for stochastic optimization, ICLR, 2015.
+\end{enumerate}
+
+\appendix
+
+\section{Individual Contributions of the Group Project}
+
+\subsection{Member Responsibilities and Outcomes}
+\begin{table}[h!]
+\centering
+\small
+\begin{tabularx}{\textwidth}{@{}l l X X@{}}
+\toprule
+Member & Responsibility Area & Completed Work & Outcomes \\
+\midrule
+M1 (Leader) & Integration, demo, coordination & Branch consolidation, adapter-based demo, intelligent sampling integration, final benchmark reconciliation support & End-to-end runnable system and demonstration readiness \\
+M2 & Data and classical baseline & FER data loading pipeline, HOG plus SVM baseline workflow, baseline evaluation setup & Reliable shared data foundation and classical benchmark path \\
+M3 & CNN model development & SimpleCNN and LiteCNN architectures and training scripts & Lightweight deep-learning model backbone for project evaluation \\
+M4 & Experimental design and ablations & Configuration and training-parameter experimentation framework & Ablation-ready infrastructure and optimization control points \\
+M5 & Evaluation and analysis support & Metrics interpretation and reporting support for final synthesis & Improved result interpretation and report alignment \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Integration-Level Team Achievement}
+\begin{itemize}[leftmargin=*]
+    \item Shared contracts enabled independent development and late-stage merge stability.
+    \item Artifact-based model loading enabled reproducible demo behavior.
+    \item Unified output schema provided fair model comparison in the same interface.
+\end{itemize}
+
+\subsection{Remaining Work Allocation Before Final Submission Lock}
+\begin{itemize}[leftmargin=*]
+    \item Final optimization and rerun ownership: LiteCNN freeze candidate and latency table
+    \item Reproducibility fix ownership: SimpleCNN checkpoint lineage verification
+    \item Final report figure ownership: confusion matrices, architecture diagram, demo screenshots
+\end{itemize}
+
+\section{Recommended Figure and Table Insertion Plan}
+To align with publication-style layout in your final template, include:
+\begin{itemize}[leftmargin=*]
+    \item Figure B1: System architecture overview
+    \item Figure B2: Demo interface snapshots for three input modes
+    \item Figure B3: HOG plus SVM confusion matrix
+    \item Figure B4: LiteCNN confusion matrix and error concentration highlights
+    \item Table B1: Verified benchmark table
+    \item Table B2: Objective achievement matrix
+    \item Table B3: Final ablation summary
+    \item Table B4: Latency benchmark under fixed hardware protocol
+\end{itemize}
+
+% Example image placeholder block for later use in Overleaf
+% \begin{figure}[h!]
+%     \centering
+%     \includegraphics[width=0.85\textwidth]{images/your_figure.png}
+%     \caption{Replace with your figure caption.}
+%     \label{fig:placeholder}
+% \end{figure}
+
+\section{Packaging Note for Final Submission}
+Before final zip upload to Canvas, include:
+\begin{itemize}[leftmargin=*]
+    \item final report PDF
+    \item presentation slides
+    \item source code snapshot
+    \item demo video file
+    \item appendix-complete report source and any supplementary plots
+\end{itemize}
+
+\end{document}
