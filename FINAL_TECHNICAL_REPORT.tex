@@ -391,10 +391,7 @@ Neutral & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{47}} & \cellc
 \end{figure}
 
 \subsubsection{SVM Configuration}
-A LinearSVC classifier with C=1.0 regularization is trained on the extracted HOG features. Hyperparameter tuning across 12 configurations showed that the default parameters (9 orientations, 8×8 pixels per cell, 2×2 cells per block) performed best at 43.23\% test accuracy. The best tuned configuration (CLAHE preprocessing, 8 orientations, 3×3 blocks) achieved 42.77\%, slightly worse than default, confirming the baseline configuration's effectiveness.
-
-\subsubsection{SVM Configuration}
-A LinearSVC classifier with C=1.0 regularization is trained on the extracted HOG features. This baseline anchors performance against non-deep-learning approaches and provides a computational efficiency reference point.
+A LinearSVC classifier with C=1.0 regularization is trained on the extracted HOG features. Hyperparameter tuning across 12 configurations showed that the default parameters (9 orientations, 8×8 pixels per cell, 2×2 cells per block) performed best at 43.23\% test accuracy. The best tuned configuration (CLAHE preprocessing, 8 orientations, 3×3 blocks) achieved 42.77\%, slightly worse than default, confirming the baseline configuration's effectiveness. This baseline anchors performance against non-deep-learning approaches and provides a computational efficiency reference point.
 
 \subsection{SimpleCNN Baseline}
 SimpleCNN implements a straightforward four-block convolutional architecture serving as the deep learning baseline. The model follows a standard CNN design pattern with progressive feature extraction.
@@ -1626,6 +1623,9 @@ MoodMirror delivers a complete lightweight FER pipeline from model development t
 
 The final optimization objective is to close the remaining accuracy gap to the 70\% target under a frozen and reproducible final checkpoint set. With this final step and completed controlled ablation tables, the project is positioned for a strong final technical submission.
 
+\medskip
+\noindent\textbf{Source Code Repository:} The full project source code, training scripts, ablation configuration files, and pre-trained model weights are available at: \url{https://github.com/muya17/EE4016_MoodMirror}
+
 \section{Compliance with Final Deliverable Requirements}
 Professor-required items and current status:
 \begin{itemize}[leftmargin=*]
@@ -1660,7 +1660,7 @@ Professor-required items and current status:
 \begin{table}[H]
 \centering
 \small
-\begin{tabularx}{\textwidth}{@{}p{3.8cm} p{2.5cm} X p{3cm}@{}}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{3.5cm} >{\raggedright\arraybackslash}p{3cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{3cm}@{}}
 \toprule
 Member (SID) & Role & Completed Work & Outcomes \\
 \midrule

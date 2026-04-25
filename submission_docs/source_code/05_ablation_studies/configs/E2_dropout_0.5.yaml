@@ -1,0 +1,20 @@
+name: E2_dropout_0.5
+model: SimpleCNN
+data_path: ../../data/fer2013
+batch_size: 256
+augment: true
+training:
+  epochs: 50
+  optimizer: Adam
+  lr: 0.001
+  weight_decay: 0.0
+  dropout_rate: 0.5
+  lr_scheduler:
+    enabled: false
+    type: null
+    params: {}
+logging:
+  log_dir: ../runs
+  save_model: true
+  save_freq: 5
+seed: 42
