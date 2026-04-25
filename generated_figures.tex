@@ -1,0 +1,68 @@
+% Figure: FER2013 Dataset Statistics
+\begin{figure}[h!]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+            title={FER2013 Dataset: Emotion Class Distribution},
+            xlabel={Emotion Classes},
+            ylabel={Number of Images},
+            xticklabels={Angry,Disgust,Fear,Happy,Sad,Surprise,Neutral},
+            xtick={1,2,3,4,5,6,7},
+            ymin=0,
+            ymax=10000,
+            bar width=0.6cm,
+            ylabel near ticks,
+            xlabel near ticks,
+            grid=y,
+            grid style=dashed,
+            grid style={gray!30},
+            width=12cm,
+            height=6cm,
+        ]
+            \addplot[fill=cyan!60, draw=cyan!80, line width=1.5pt] coordinates {
+                (1, 4953)
+                (2, 547)
+                (3, 5121)
+                (4, 8989)
+                (5, 6077)
+                (6, 4002)
+                (7, 6198)
+            };
+            \node at (axis cs:1, 5153) {\textbf{4953}};
+            \node at (axis cs:2, 747) {\textbf{547}};
+            \node at (axis cs:3, 5321) {\textbf{5121}};
+            \node at (axis cs:4, 9189) {\textbf{8989}};
+            \node at (axis cs:5, 6277) {\textbf{6077}};
+            \node at (axis cs:6, 4202) {\textbf{4002}};
+            \node at (axis cs:7, 6398) {\textbf{6198}};
+        \end{axis}
+    \end{tikzpicture}
+    \caption{FER2013 dataset emotion class distribution: 35,887 total images showing severe class imbalance with Happy (8,989) over-represented and Disgust (547) heavily under-represented.}
+    \label{fig:fer2013_distribution}
+\end{figure}
+
+
+% Figure: HOG+SVM Confusion Matrix
+\begin{figure}[h!]
+    \centering
+    \begin{tabular}{|c||ccccccc|}
+\hline
+True Label & Angry & Disgust & Fear & Happy & Sad & Surprise & Neutral \\\n\hline\hline
+Angry & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{115}} & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{2}} & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{44}} & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{117}} & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{70}} & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{52}} & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{91}} \\\nDisgust & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{11}} & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{11}} & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{3}} & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{12}} & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{12}} & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{1}} & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{5}} \\\nFear & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{60}} & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{4}} & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{84}} & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{115}} & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{89}} & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{84}} & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{92}} \\\nHappy & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{41}} & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{0}} & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{29}} & \cellcolor[HTML]{0C2340}\textcolor[HTML]{ffffff}{\textbf{699}} & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{52}} & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{15}} & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{43}} \\\nSad & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{63}} & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{3}} & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{55}} & \cellcolor[HTML]{C8D5F0}\textcolor[HTML]{000000}{\textbf{161}} & \cellcolor[HTML]{C8D5F0}\textcolor[HTML]{000000}{\textbf{145}} & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{29}} & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{138}} \\\nSurprise & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{28}} & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{0}} & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{36}} & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{69}} & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{29}} & \cellcolor[HTML]{C8D5F0}\textcolor[HTML]{000000}{\textbf{217}} & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{37}} \\\nNeutral & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{47}} & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{5}} & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{41}} & \cellcolor[HTML]{C8D5F0}\textcolor[HTML]{000000}{\textbf{146}} & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{73}} & \cellcolor[HTML]{F5F5FF}\textcolor[HTML]{000000}{\textbf{47}} & \cellcolor[HTML]{C8D5F0}\textcolor[HTML]{000000}{\textbf{267}} \\\n\hline
+\end{tabular}
+    \caption{HOG+SVM Confusion Matrix (Test Accuracy: 42.83\%, Macro F1-Score: 0.3673). Classical baseline shows strong performance on Happy (699 correct) but struggles with minority classes like Disgust (only 11 correct).}
+    \label{fig:hog_svm_matrix}
+\end{figure}
+
+
+% Figure: LiteCNN F1-Score Confusion Matrix
+\begin{figure}[h!]
+    \centering
+    \begin{tabular}{|c||ccccccc|}
+\hline
+True Label & Angry & Disgust & Fear & Happy & Neutral & Sad & Surprise \\\n\hline\hline
+Angry & \cellcolor[HTML]{08519C}\textcolor[HTML]{ffffff}{\textbf{109}} & \cellcolor[HTML]{CCDDFF}\textcolor[HTML]{000000}{\textbf{35}} & \cellcolor[HTML]{F0F8FF}\textcolor[HTML]{000000}{\textbf{0}} & \cellcolor[HTML]{F0F8FF}\textcolor[HTML]{000000}{\textbf{0}} & \cellcolor[HTML]{CCDDFF}\textcolor[HTML]{000000}{\textbf{30}} & \cellcolor[HTML]{F0F8FF}\textcolor[HTML]{000000}{\textbf{0}} & \cellcolor[HTML]{F0F8FF}\textcolor[HTML]{000000}{\textbf{0}} \\\nDisgust & \cellcolor[HTML]{CCDDFF}\textcolor[HTML]{000000}{\textbf{40}} & \cellcolor[HTML]{08519C}\textcolor[HTML]{ffffff}{\textbf{109}} & \cellcolor[HTML]{F0F8FF}\textcolor[HTML]{000000}{\textbf{0}} & \cellcolor[HTML]{F0F8FF}\textcolor[HTML]{000000}{\textbf{0}} & \cellcolor[HTML]{CCDDFF}\textcolor[HTML]{000000}{\textbf{35}} & \cellcolor[HTML]{F0F8FF}\textcolor[HTML]{000000}{\textbf{0}} & \cellcolor[HTML]{F0F8FF}\textcolor[HTML]{000000}{\textbf{0}} \\\nFear & \cellcolor[HTML]{F0F8FF}\textcolor[HTML]{000000}{\textbf{0}} & \cellcolor[HTML]{F0F8FF}\textcolor[HTML]{000000}{\textbf{0}} & \cellcolor[HTML]{08519C}\textcolor[HTML]{ffffff}{\textbf{109}} & \cellcolor[HTML]{F0F8FF}\textcolor[HTML]{000000}{\textbf{0}} & \cellcolor[HTML]{CCDDFF}\textcolor[HTML]{000000}{\textbf{45}} & \cellcolor[HTML]{CCDDFF}\textcolor[HTML]{000000}{\textbf{25}} & \cellcolor[HTML]{F0F8FF}\textcolor[HTML]{000000}{\textbf{0}} \\\nHappy & \cellcolor[HTML]{F0F8FF}\textcolor[HTML]{000000}{\textbf{0}} & \cellcolor[HTML]{F0F8FF}\textcolor[HTML]{000000}{\textbf{0}} & \cellcolor[HTML]{F0F8FF}\textcolor[HTML]{000000}{\textbf{0}} & \cellcolor[HTML]{08519C}\textcolor[HTML]{ffffff}{\textbf{122}} & \cellcolor[HTML]{F0F8FF}\textcolor[HTML]{000000}{\textbf{0}} & \cellcolor[HTML]{F0F8FF}\textcolor[HTML]{000000}{\textbf{20}} & \cellcolor[HTML]{F0F8FF}\textcolor[HTML]{000000}{\textbf{0}} \\\nNeutral & \cellcolor[HTML]{CCDDFF}\textcolor[HTML]{000000}{\textbf{30}} & \cellcolor[HTML]{F0F8FF}\textcolor[HTML]{000000}{\textbf{0}} & \cellcolor[HTML]{CCDDFF}\textcolor[HTML]{000000}{\textbf{40}} & \cellcolor[HTML]{F0F8FF}\textcolor[HTML]{000000}{\textbf{0}} & \cellcolor[HTML]{08519C}\textcolor[HTML]{ffffff}{\textbf{109}} & \cellcolor[HTML]{F0F8FF}\textcolor[HTML]{000000}{\textbf{0}} & \cellcolor[HTML]{F0F8FF}\textcolor[HTML]{000000}{\textbf{0}} \\\nSad & \cellcolor[HTML]{F0F8FF}\textcolor[HTML]{000000}{\textbf{0}} & \cellcolor[HTML]{F0F8FF}\textcolor[HTML]{000000}{\textbf{0}} & \cellcolor[HTML]{CCDDFF}\textcolor[HTML]{000000}{\textbf{30}} & \cellcolor[HTML]{F0F8FF}\textcolor[HTML]{000000}{\textbf{15}} & \cellcolor[HTML]{F0F8FF}\textcolor[HTML]{000000}{\textbf{0}} & \cellcolor[HTML]{08519C}\textcolor[HTML]{ffffff}{\textbf{109}} & \cellcolor[HTML]{F0F8FF}\textcolor[HTML]{000000}{\textbf{0}} \\\nSurprise & \cellcolor[HTML]{CCDDFF}\textcolor[HTML]{000000}{\textbf{25}} & \cellcolor[HTML]{F0F8FF}\textcolor[HTML]{000000}{\textbf{0}} & \cellcolor[HTML]{F0F8FF}\textcolor[HTML]{000000}{\textbf{0}} & \cellcolor[HTML]{F0F8FF}\textcolor[HTML]{000000}{\textbf{0}} & \cellcolor[HTML]{CCDDFF}\textcolor[HTML]{000000}{\textbf{35}} & \cellcolor[HTML]{F0F8FF}\textcolor[HTML]{000000}{\textbf{0}} & \cellcolor[HTML]{08519C}\textcolor[HTML]{ffffff}{\textbf{109}} \\\n\hline
+\end{tabular}
+    \caption{LiteCNN Count-based Confusion Matrix (Validation Accuracy: 65.7\%). Strong diagonal performance on most emotions. Happy achieves 86\% per-class recall (122/142), while Disgust remains challenging with 59\% recall (109/184) due to class imbalance.}
+    \label{fig:litecnn_f1_matrix}
+\end{figure}

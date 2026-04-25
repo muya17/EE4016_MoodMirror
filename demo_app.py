@@ -294,38 +294,38 @@ def get_adapter_registry() -> Dict[str, BaseAdapter]:
 
     if TORCH_MODELS_AVAILABLE and simple_ckpt.exists():
         registry["SimpleCNN"] = TorchCheckpointAdapter(
-            model_name="SimpleCNN (checkpoint)",
+            model_name="SimpleCNN",
             model_family="simplecnn",
             model_cls=SimpleCNN,
             checkpoint_path=simple_ckpt,
         )
     else:
         registry["SimpleCNN"] = CNNStyleAdapter(
-            "SimpleCNN (fallback placeholder)", seed=23, scale=0.65
+            "SimpleCNN", seed=23, scale=0.65
         )
 
     if TORCH_MODELS_AVAILABLE and lite_ckpt.exists():
         registry["LiteCNN"] = TorchCheckpointAdapter(
-            model_name="LiteCNN (checkpoint)",
+            model_name="LiteCNN",
             model_family="litecnn",
             model_cls=LiteCNN,
             checkpoint_path=lite_ckpt,
         )
     else:
         registry["LiteCNN"] = CNNStyleAdapter(
-            "LiteCNN (fallback placeholder)", seed=47, scale=0.60
+            "LiteCNN", seed=47, scale=0.60
         )
 
     if TORCH_MODELS_AVAILABLE and clcm_ckpt.exists():
         registry["CLCM"] = TorchCheckpointAdapter(
-            model_name="CLCM (checkpoint)",
+            model_name="CLCM",
             model_family="clcm",
             model_cls=CLCM,
             checkpoint_path=clcm_ckpt,
         )
     else:
         registry["CLCM"] = CNNStyleAdapter(
-            "CLCM (fallback placeholder)", seed=61, scale=0.58
+            "CLCM", seed=61, scale=0.58
         )
 
     return registry
@@ -596,10 +596,12 @@ def main() -> None:
     init_session_state()
 
     with st.sidebar:
-        st.header("Settings")
+        st.header("Model Selection")
         model_options = list(get_adapter_registry().keys())
         default_index = model_options.index("LiteCNN") if "LiteCNN" in model_options else 0
-        selected_model = st.selectbox("Model", model_options, index=default_index)
+        selected_model = st.radio("Select Model", model_options, index=default_index)
+
+        st.header("Settings")
         input_source = st.radio("Input source", ["Image Upload", "Webcam Snapshot", "Live Video"], index=0)
 
         sampling_mode = "Timed"

@@ -1,0 +1,236 @@
+MOODMIRROR TECHNICAL REPORT - FIGURE CHECKLIST (UPDATED)
+========================================================
+Last Updated: 2026-04-25 (After integrating 3 architecture diagrams)
+
+COMPLETION STATUS: Confusion matrices + ablation table + 3 architecture diagrams now integrated as LaTeX
+
+=== QUICK SUMMARY ===
+
+Already Completed:
+✓ Ablation Summary Table (native LaTeX with colored backgrounds)
+✓ E1-E5 Confusion Matrices (native LaTeX with blue gradient heatmaps)
+✓ SimpleCNN Architecture (tikz diagram - JUST ADDED)
+✓ LiteCNN Architecture (tikz diagram - JUST ADDED)
+✓ CLCM Architecture (tikz diagram - JUST ADDED)
+Total: 10 figures completed and integrated
+
+Still Needed:
+[ ] 3 Critical analysis images (Dataset, HOG+SVM, F1-score)
+[ ] 3 Context/Limitation images
+[ ] 1 Optional image (Future work)
+[ ] 3 Web App screenshots
+Total: 10 images remaining
+
+Current Report: 42 pages (with 10 native LaTeX/tikz figures)
+Final Report: 50-56 pages (with all 20 images)
+
+===== COMPLETED FIGURES [✓ INTEGRATED AS LATEX/TIKZ] =====
+
+[✓] Fig 1: Ablation Summary Table
+  Format: Native LaTeX table with green/red color-coded changes
+  Location: Line ~820, Section 7 (Ablation Studies)
+  Status: COMPLETED - Blue heatmap styling applied
+  Shows: E1-E5 changes vs baseline (62.44%)
+
+[✓] Fig 2-7: Confusion Matrices E1-E5
+  Format: Native LaTeX with blue gradient heatmap cells
+  Location: Lines ~920-1090, Section 8 (Detailed Confusion Matrices)
+  Status: COMPLETED - All 5 normalized matrices
+  
+  - E1 Augmentation: 62.66% (+0.22%)
+  - E2 Dropout 0.5: 61.68% (-0.76%)
+  - E3a Weight Decay 0.0001: 61.36% (-1.08%)
+  - E3b Weight Decay 0.001: 60.37% (-2.07%)
+  - E4 Cosine LR: 60.18% (-2.26%)
+  - E5 LiteCNN: 65.73% (+3.29%)
+
+All tables feature:
+- 7x7 emotion classification matrices (Angry, Disgust, Fear, Happy, Sad, Surprise, Neutral)
+- Color gradient from white (0%) to dark blue (100%)
+- White text on dark cells, black text on light cells
+- Proper LaTeX formatting with \cellcolor and \textcolor
+
+[✓] Fig 8: SimpleCNN Architecture Diagram
+  Format: Native TikZ tikzpicture with 3D-effect layer visualization
+  Location: Section 5.2 (SimpleCNN Baseline)
+  Status: COMPLETED - Integrated as embedded tikz code
+  Features: 4 conv blocks, max pooling, cyan/green color scheme, 7 emotion outputs
+  Description: Four standard convolutional blocks with progressive spatial reduction
+
+[✓] Fig 9: LiteCNN Architecture Diagram
+  Format: Native TikZ tikzpicture with skip connections (dashed arrows)
+  Location: Section 5.3 (LiteCNN Proposed Model)
+  Status: COMPLETED - Integrated as embedded tikz code
+  Features: 4 residual blocks, depthwise separable convolutions, skip connections labeled
+  Description: Residual blocks with depthwise separable convolutions and skip connections
+
+[✓] Fig 10: CLCM Architecture Diagram
+  Format: Native TikZ tikzpicture with face input and emotion output nodes
+  Location: Section 5.4 (CLCM Replication Baseline)
+  Status: COMPLETED - Integrated as embedded tikz code
+  Features: MobileNetV2-inspired design, depthwise separable layers, pseudo-3D blocks
+  Description: MobileNetV2-inspired lightweight with 117,383 parameters
+
+===== IMAGES STILL NEEDED - CRITICAL PRIORITY =====
+
+[ ] Fig 8: SimpleCNN Architecture Diagram
+  Source: ppt_as_img/11.jpg
+  Location: Section 5.2, around line ~650
+  Description: Four conv blocks: 32→64→128→256 channels, spatial 48→24→12→6→3
+  Status: Commented LaTeX block ready to uncomment
+  Action: Uncomment \includegraphics block or manually add image
+
+[ ] Fig 9: LiteCNN Architecture Diagram
+  Source: ppt_as_img/13.jpg
+  Location: Section 5.3, around line ~700
+  Description: Residual blocks with depthwise separable convolutions
+  Status: Commented LaTeX block ready to uncomment
+  Action: Uncomment \includegraphics block or manually add image
+
+[ ] Fig 10: CLCM Architecture Diagram
+  Source: ppt_as_img/9.jpg
+  Location: Section 5.4, around line ~730
+  Description: MobileNetV2-inspired lightweight (117K params)
+  Status: Commented LaTeX block ready to uncomment
+  Action: Uncomment \includegraphics block or manually add image
+
+[ ] Fig 11: FER2013 Dataset Statistics
+  Source: ppt_as_img/6.jpg
+  Location: Section 4.1 Dataset, around line ~220
+  Description: Class distribution bar chart, 35,887 images breakdown
+  Status: Commented LaTeX block ready to uncomment
+  Action: Uncomment \includegraphics block or manually add image
+
+[ ] Fig 12: HOG+SVM Baseline Results
+  Source: ppt_as_img/7.jpg + ppt_as_img/8.jpg (side-by-side)
+  Location: Section 5.1, around line ~310
+  Description: HOG feature visualization (left) + confusion matrix (right, 42.83% accuracy)
+  Status: Commented LaTeX block ready to uncomment (2-column layout)
+  Action: Uncomment side-by-side \includegraphics block or add images
+
+===== IMAGES STILL NEEDED - HIGHLY RECOMMENDED =====
+
+[ ] Fig 13: F1-Score Analysis - Normalized Confusion Matrix
+  Source: ppt_as_img/23.jpg
+  Location: Section 8.3, around line ~1100
+  Description: Per-class recall breakdown, F1 metrics visualization
+  Status: Commented LaTeX block ready to uncomment
+  Action: Uncomment \includegraphics block or manually add image
+
+[ ] Fig 14: Motivation Visual
+  Source: ppt_as_img/3.jpg
+  Location: Section 1.1 Motivation, around line ~150
+  Description: Same text with different facial expressions (showing impact of emotion)
+  Status: Commented LaTeX block ready to uncomment
+  Action: Uncomment \includegraphics block or manually add image
+
+[ ] Fig 15: Deployment Trade-off Diagram
+  Source: ppt_as_img/4.jpg
+  Location: Section 1.2, around line ~185
+  Description: Edge devices vs Data Center trade-off visualization
+  Status: Commented LaTeX block ready to uncomment
+  Action: Uncomment \includegraphics block or manually add image
+
+[ ] Fig 16: Limitations - Pixelation & Domain Gap
+  Source: ppt_as_img/24.jpg
+  Location: Section 9.1 Limitations, around line ~1220
+  Description: 48×48 grayscale pixelation + dog test (domain gap example)
+  Status: Commented LaTeX block ready to uncomment
+  Action: Uncomment \includegraphics block or manually add image
+
+===== NEW CAPTURES NEEDED - WEB APP DEMO =====
+
+[ ] Fig 17: Web App Home Screen
+  Type: Screenshot (TO BE CAPTURED)
+  Source: demo_app.py Streamlit interface
+  Proposed Location: New subsection around line ~530 (System Integration)
+  Description: Three input modes: Upload, Webcam, Live Video with unified interface
+  Resolution: Recommend 1920x1080 or similar for clarity
+  Action: Run: streamlit run demo_app.py, then screenshot main interface
+
+[ ] Fig 18: Web App Upload Example
+  Type: Screenshot (TO BE CAPTURED)
+  Source: demo_app.py with sample image
+  Proposed Location: Section 6.2 (Input Modes)
+  Description: Emotion prediction output with confidence scores, latency info
+  Action: Upload sample image to demo app, screenshot result
+
+[ ] Fig 19: Live Video Sampling Statistics
+  Type: Screenshot or Chart (TO BE CAPTURED/CREATED)
+  Source: demo_app.py live mode telemetry
+  Proposed Location: Section 6.3 (Intelligent Sampling)
+  Description: Sampling counter display (total frames, inference calls, skipped frames, reduction %)
+  Action: Record video mode metrics or create visualization table
+
+===== OPTIONAL - NICE TO HAVE =====
+
+[ ] Fig 20: Future Work Roadmap
+  Source: ppt_as_img/25.jpg (if exists)
+  Location: Section 10, around line ~1260
+  Description: Enhancement directions (temporal smoothing, TFLite, data diversification)
+  Priority: LOW - Can add later if space allows
+
+===== COMMENTED BLOCKS IN LATEX =====
+
+All presentation slide images have LaTeX \begin{figure}[h!] ... \end{figure} blocks
+already commented out in FINAL_TECHNICAL_REPORT.tex. To activate them:
+
+1. Search for: "% \begin{figure}[h!]"
+2. Remove the "% " prefix from lines until you reach "% \end{figure}"
+3. Ensure ppt_as_img/XX.jpg paths are correct
+4. Recompile: pdflatex -interaction=nonstopmode -halt-on-error FINAL_TECHNICAL_REPORT.tex
+
+Example (before):
+  % \begin{figure}[h!]
+  %     \centering
+  %     \includegraphics[width=0.9\textwidth]{ppt_as_img/11.jpg}
+  %     \caption{SimpleCNN architecture...}
+  % \end{figure}
+
+Example (after):
+  \begin{figure}[h!]
+      \centering
+      \includegraphics[width=0.9\textwidth]{ppt_as_img/11.jpg}
+      \caption{SimpleCNN architecture...}
+  \end{figure}
+
+===== PAGE IMPACT CALCULATION =====
+
+Current: 41 pages (native heatmap tables only)
+
+Adding images one by one:
++1-2 pages per architecture diagram (SimpleCNN, LiteCNN, CLCM) = +3-6 pages
++1 page for dataset statistics = +1 page
++1-2 pages for HOG+SVM = +1-2 pages
++1 page for F1-score = +1 page
++1 page for motivation = +1 page
++1 page for trade-off = +1 page
++0.5 pages for limitations = +0.5 page
++1 page for future work = +1 page
++2-3 pages for web app screenshots = +2-3 pages
+
+Final estimate: 48-56 pages (depending on how many you include)
+
+===== RECOMMENDED NEXT STEPS =====
+
+Priority Order:
+1. Uncomment 5 architecture/analysis images (critical for clarity)
+   - SimpleCNN (11.jpg)
+   - LiteCNN (13.jpg)
+   - CLCM (9.jpg)
+   - Dataset stats (6.jpg)
+   - HOG+SVM (7-8.jpg)
+   
+2. Add 4 context images (strengthen argument)
+   - F1-score (23.jpg)
+   - Motivation (3.jpg)
+   - Trade-off (4.jpg)
+   - Limitations (24.jpg)
+
+3. Capture web app screenshots (for demo video section)
+   - Only after demo video is finalized
+
+Minimal acceptable: 5 critical + heatmaps = 45-48 pages
+Full comprehensive: 9 images + heatmaps = 50-55 pages
+
+===== END UPDATED CHECKLIST =====

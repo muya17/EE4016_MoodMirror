@@ -1,0 +1,158 @@
+MOODMIRROR TECHNICAL REPORT - FIGURE CHECKLIST
+=============================================
+
+Instructions:
+1. Collect slides from ppt_as_img/ folder
+2. Organize in folder with names matching this checklist
+3. Uncomment corresponding LaTeX blocks in FINAL_TECHNICAL_REPORT.tex
+
+STATUS: [ ] = Not added, [✓] = Added, [PRIORITY] = Must-have
+
+===== CRITICAL FIGURES (Must-Include) =====
+
+[PRIORITY] Fig 1: SimpleCNN Architecture
+  Source: ppt_as_img/11.jpg
+  LaTeX Block: Around line ~650 (Section 5.2)
+  Description: Four conv blocks with spatial reduction 48→24→12→6→3
+  Caption: "SimpleCNN architecture: Four standard convolutional blocks with progressive spatial reduction and channel expansion"
+
+[PRIORITY] Fig 2: LiteCNN Architecture  
+  Source: ppt_as_img/13.jpg
+  LaTeX Block: Around line ~700 (Section 5.3)
+  Description: Residual blocks with depthwise separable convolutions
+  Caption: "LiteCNN architecture: Four residual blocks with depthwise separable convolutions and skip connections"
+
+[PRIORITY] Fig 3: CLCM Architecture
+  Source: ppt_as_img/9.jpg
+  LaTeX Block: Around line ~730 (Section 5.4)
+  Description: MobileNetV2-inspired 117K param model
+  Caption: "CLCM architecture: MobileNetV2-inspired lightweight CNN with 117,383 parameters"
+
+[PRIORITY] Fig 4: E5 SimpleCNN vs LiteCNN Comparison Table + Confusion Matrix
+  Source: ppt_as_img/14.jpg + ppt_as_img/22.jpg
+  LaTeX Block: Around line ~920 (Section 7.5)
+  Description: Model comparison and LiteCNN confusion matrix
+  Caption: "SimpleCNN vs LiteCNN comparison and LiteCNN confusion matrix showing +3.26% improvement"
+
+===== HIGHLY RECOMMENDED FIGURES (Strong Evidence) =====
+
+[PRIORITY] Fig 5: FER2013 Dataset Statistics
+  Source: ppt_as_img/6.jpg
+  LaTeX Block: Around line ~220 (Section 4.1)
+  Description: 35,887 images, 48×48, class distribution
+  Caption: "FER2013 dataset: 35,887 grayscale images with severe class imbalance (Happy 25.1%, Disgust 1.5%)"
+
+[PRIORITY] Fig 6: HOG+SVM Visualization and Results
+  Source: ppt_as_img/7.jpg + ppt_as_img/8.jpg (side-by-side)
+  LaTeX Block: Around line ~310 (Section 5.1)
+  Description: HOG feature extraction + confusion matrix (42.83% accuracy)
+  Caption: "HOG+SVM baseline: Feature extraction (left) and confusion matrix with 42.83% test accuracy"
+
+[PRIORITY] Fig 7: Ablation E1 - Data Augmentation
+  Source: ppt_as_img/17.jpg
+  LaTeX Block: Around line ~780 (Section 7.1)
+  Description: Confusion matrix with augmentation on
+  Caption: "Ablation E1: Data augmentation validation results (62.66%, +0.22%)"
+
+[PRIORITY] Fig 8: Ablation E2-E4 Confusion Matrices
+  Source: ppt_as_img/18.jpg, ppt_as_img/19.jpg, ppt_as_img/20.jpg, ppt_as_img/21.jpg
+  LaTeX Block: Around line ~800-850 (Section 7.2-7.4)
+  Description: Four ablation results showing negative effects
+  Caption: "Ablations E2-E4: Dropout 0.5 (61.68%), Weight decay 0.0001 (61.36%), Weight decay 0.001 (60.37%), Cosine LR (60.18%)"
+
+[PRIORITY] Fig 9: F1-Score Analysis - Normalized Confusion Matrix
+  Source: ppt_as_img/23.jpg
+  LaTeX Block: Around line ~950 (Section 8.3)
+  Description: Normalized confusion matrix with F1 breakdown
+  Caption: "LiteCNN F1-score analysis: Normalized confusion matrix showing per-class recall and performance breakdown"
+
+===== HIGHLY RECOMMENDED FIGURES (Context & Limitations) =====
+
+[] Fig 10: Motivation - Communication is More Than Words
+  Source: ppt_as_img/3.jpg
+  LaTeX Block: Around line ~150 (Section 1.1)
+  Description: Same text with three different expressions
+  Caption: "Motivation: Same verbal message with different facial expressions conveys different meanings"
+
+[] Fig 11: Deployment Trade-off
+  Source: ppt_as_img/4.jpg
+  LaTeX Block: Around line ~185 (Section 1.2)
+  Description: Edge vs Data Center models trade-off
+  Caption: "Deployment trade-off: Edge devices are efficient but less accurate; data center models are accurate but computationally prohibitive"
+
+[] Fig 12: Limitations - Grayscale Pixelation and Domain Gap
+  Source: ppt_as_img/24.jpg
+  LaTeX Block: Around line ~1220 (Section 9.1)
+  Description: Low-res face + dog test failure
+  Caption: "Limitations: 48×48 grayscale pixelation loses details; model shows domain gap (predicts Neutral for dog face)"
+
+===== NEW FIGURES NEEDED (Web App & Sampling) =====
+
+[] Fig 13: Web App Interface - Home Screen
+  Source: TO BE CAPTURED (screenshot from demo_app.py)
+  Suggested LaTeX Block: New section after System Integration (around line ~520)
+  Description: Streamlit app showing the three input modes
+  Caption: "MoodMirror Web App: Upload, webcam, and live video input modes with unified emotion prediction interface"
+
+[] Fig 14: Web App - Upload Mode Example
+  Source: TO BE CAPTURED
+  Description: Sample emotion prediction result
+  Caption: "Web App in action: Image upload mode showing emotion classification with confidence scores"
+
+[] Fig 15: Web App - Live Video Sampling Mode
+  Source: TO BE CAPTURED or DIAGRAM
+  Description: Show sampling statistics (total frames, inference calls, skipped frames, reduction %)
+  Caption: "Intelligent sampling in live video mode: Reduces inference calls through frame change detection (L2 distance threshold)"
+
+[] Fig 16: Sampling Performance Visualization
+  Source: TO BE CREATED (chart/table)
+  Description: Frame sampling statistics showing efficiency gains
+  Caption: "Sampling efficiency: Example showing 85% frame skip rate with adaptive change detection threshold"
+
+===== OPTIONAL FIGURES (Nice-to-Have) =====
+
+[] Fig 17: Future Work Roadmap
+  Source: ppt_as_img/25.jpg (if exists)
+  Description: Enhancement directions
+  Caption: "Future work: Temporal smoothing, TFLite deployment, data diversification strategies"
+
+[] Fig 18: SimpleCNN Architecture Detail Diagram
+  Source: ppt_as_img/12.jpg (if exists - different angle)
+  Description: Detailed layer breakdown
+  Caption: "SimpleCNN detailed architecture: Conv layer dimensions and pooling operations"
+
+[] Fig 19: LiteCNN Architecture Detail Diagram  
+  Source: ppt_as_img/14.jpg alternative view
+  Description: Residual block detail
+  Caption: "LiteCNN residual blocks: Depthwise separable convolution with skip connections"
+
+===== SUMMARY STATISTICS =====
+
+Total Figures in Report:    19 (6 placeholders active, 13 ready to add)
+Critical Must-Have:         9 figures
+Highly Recommended:         6 figures  
+Optional/Nice-to-Have:      4 figures
+
+Estimated Page Impact:
+- With 9 critical figures:   41-45 pages
+- With 15+ figures:          45-50+ pages
+
+===== INSTRUCTIONS FOR ADDING =====
+
+1. Create folder: /ppt_as_img_final/ or similar
+2. Copy/rename files matching checklist numbers (Fig1.jpg, Fig2.jpg, etc)
+3. For new Web App figures:
+   - Run demo_app.py and take screenshots
+   - Create sampling stats diagram in Python/Excel
+4. Tell assistant: "Ready to add figures, here's the list with paths"
+5. Assistant will uncomment LaTeX blocks and adjust paths
+
+===== NOTES =====
+
+- Each figure needs a caption and label for LaTeX referencing
+- Uncommented blocks maintain professional formatting
+- All figures should be 0.7-0.95 textwidth for readability
+- Total report will be 45-50 pages with all figures
+- Can prioritize: add 9 critical figures first, then expand
+
+===== END CHECKLIST =====

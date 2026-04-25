@@ -1,46 +1,144 @@
-\contentsline {section}{Revision History}{1}{section*.1}%
-\contentsline {section}{\numberline {1}Introduction}{4}{section.1}%
-\contentsline {subsection}{\numberline {1.1}Motivation}{4}{subsection.1.1}%
-\contentsline {subsection}{\numberline {1.2}Problem Statement}{5}{subsection.1.2}%
-\contentsline {subsection}{\numberline {1.3}Project Objectives}{5}{subsection.1.3}%
-\contentsline {subsection}{\numberline {1.4}Contributions of This Report}{5}{subsection.1.4}%
-\contentsline {section}{\numberline {2}Report Conventions and Notation}{6}{section.2}%
-\contentsline {subsection}{\numberline {2.1}General Symbols}{6}{subsection.2.1}%
-\contentsline {subsection}{\numberline {2.2}Dataset and Split Symbols}{6}{subsection.2.2}%
-\contentsline {subsection}{\numberline {2.3}Function Notation}{6}{subsection.2.3}%
-\contentsline {section}{\numberline {3}Project Organization and Integration Evidence}{6}{section.3}%
-\contentsline {subsection}{\numberline {3.1}Branch Consolidation}{6}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}Merge Governance}{7}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}Integrated Artifact Set}{7}{subsection.3.3}%
-\contentsline {section}{\numberline {4}Data, Preprocessing, and Experimental Protocol}{7}{section.4}%
-\contentsline {subsection}{\numberline {4.1}Dataset}{7}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Preprocessing Pipeline}{8}{subsection.4.2}%
-\contentsline {subsection}{\numberline {4.3}Evaluation Metrics}{8}{subsection.4.3}%
-\contentsline {subsection}{\numberline {4.4}Evidence Classification}{9}{subsection.4.4}%
-\contentsline {section}{\numberline {5}Methods}{9}{section.5}%
-\contentsline {subsection}{\numberline {5.1}HOG plus SVM Baseline}{9}{subsection.5.1}%
-\contentsline {subsection}{\numberline {5.2}SimpleCNN Baseline}{9}{subsection.5.2}%
-\contentsline {subsection}{\numberline {5.3}LiteCNN Proposed Model}{9}{subsection.5.3}%
-\contentsline {subsection}{\numberline {5.4}CLCM Replication Baseline}{9}{subsection.5.4}%
-\contentsline {section}{\numberline {6}System Integration and Demo Architecture}{10}{section.6}%
-\contentsline {subsection}{\numberline {6.1}Unified Adapter Contract}{10}{subsection.6.1}%
-\contentsline {subsection}{\numberline {6.2}Input Modes}{10}{subsection.6.2}%
-\contentsline {subsection}{\numberline {6.3}Intelligent Sampling for Live Inference}{10}{subsection.6.3}%
-\contentsline {section}{\numberline {7}Results}{11}{section.7}%
-\contentsline {subsection}{\numberline {7.1}Verified Current Benchmark Table}{11}{subsection.7.1}%
-\contentsline {subsection}{\numberline {7.2}Comparative Interpretation}{11}{subsection.7.2}%
-\contentsline {subsection}{\numberline {7.3}Historical Context (Non-claim Support)}{11}{subsection.7.3}%
-\contentsline {section}{\numberline {8}Objective Achievement Matrix}{12}{section.8}%
-\contentsline {section}{\numberline {9}Discussion}{12}{section.9}%
-\contentsline {subsection}{\numberline {9.1}What Was Achieved Well}{12}{subsection.9.1}%
-\contentsline {subsection}{\numberline {9.2}Remaining Scientific and Reporting Gaps}{13}{subsection.9.2}%
-\contentsline {subsection}{\numberline {9.3}Threats to Validity}{13}{subsection.9.3}%
-\contentsline {section}{\numberline {10}Conclusion}{13}{section.10}%
-\contentsline {section}{\numberline {11}Compliance with Final Deliverable Requirements}{13}{section.11}%
-\contentsline {section}{References}{14}{section*.9}%
-\contentsline {section}{\numberline {A}Individual Contributions of the Group Project}{15}{appendix.A}%
-\contentsline {subsection}{\numberline {A.1}Member Responsibilities and Outcomes}{15}{subsection.A.1}%
-\contentsline {subsection}{\numberline {A.2}Integration-Level Team Achievement}{15}{subsection.A.2}%
-\contentsline {subsection}{\numberline {A.3}Remaining Work Allocation Before Final Submission Lock}{15}{subsection.A.3}%
-\contentsline {section}{\numberline {B}Recommended Figure and Table Insertion Plan}{16}{appendix.B}%
-\contentsline {section}{\numberline {C}Packaging Note for Final Submission}{16}{appendix.C}%
+\contentsline {section}{\numberline {1}Introduction}{7}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Motivation}{7}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Problem Statement}{8}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}Project Objectives}{8}{subsection.1.3}%
+\contentsline {subsection}{\numberline {1.4}Contributions of This Report}{9}{subsection.1.4}%
+\contentsline {section}{\numberline {2}Report Conventions and Notation}{9}{section.2}%
+\contentsline {subsection}{\numberline {2.1}General Symbols}{9}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Dataset and Split Symbols}{10}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Function Notation}{10}{subsection.2.3}%
+\contentsline {section}{\numberline {3}Project Organization and Integration Evidence}{10}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Branch Consolidation}{10}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Merge Governance}{10}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Integrated Artifact Set}{11}{subsection.3.3}%
+\contentsline {section}{\numberline {4}Data, Preprocessing, and Experimental Protocol}{11}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Dataset: FER2013}{11}{subsection.4.1}%
+\contentsline {subsubsection}{\numberline {4.1.1}Dataset Statistics}{11}{subsubsection.4.1.1}%
+\contentsline {subsubsection}{\numberline {4.1.2}Class Distribution}{12}{subsubsection.4.1.2}%
+\contentsline {subsubsection}{\numberline {4.1.3}Dataset Organization}{12}{subsubsection.4.1.3}%
+\contentsline {subsection}{\numberline {4.2}Preprocessing Pipeline}{12}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Evaluation Metrics}{13}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Evidence Classification}{14}{subsection.4.4}%
+\contentsline {section}{\numberline {5}Methods}{14}{section.5}%
+\contentsline {subsection}{\numberline {5.1}HOG plus SVM Baseline}{14}{subsection.5.1}%
+\contentsline {subsubsection}{\numberline {5.1.1}HOG Feature Extraction}{14}{subsubsection.5.1.1}%
+\contentsline {subsubsection}{\numberline {5.1.2}SVM Configuration}{14}{subsubsection.5.1.2}%
+\contentsline {subsubsection}{\numberline {5.1.3}SVM Configuration}{15}{subsubsection.5.1.3}%
+\contentsline {subsection}{\numberline {5.2}SimpleCNN Baseline}{15}{subsection.5.2}%
+\contentsline {subsubsection}{\numberline {5.2.1}Architecture Details}{15}{subsubsection.5.2.1}%
+\contentsline {subsection}{\numberline {5.3}LiteCNN Proposed Model}{16}{subsection.5.3}%
+\contentsline {subsubsection}{\numberline {5.3.1}Architecture Details}{16}{subsubsection.5.3.1}%
+\contentsline {subsubsection}{\numberline {5.3.2}Key Innovations}{17}{subsubsection.5.3.2}%
+\contentsline {subsection}{\numberline {5.4}CLCM Replication Baseline}{17}{subsection.5.4}%
+\contentsline {subsubsection}{\numberline {5.4.1}Architecture Details}{18}{subsubsection.5.4.1}%
+\contentsline {section}{\numberline {6}System Integration and Demo Architecture}{18}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Unified Adapter Contract}{18}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Input Modes}{19}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}Intelligent Sampling for Live Inference}{19}{subsection.6.3}%
+\contentsline {section}{\numberline {7}Web Application Architecture and Deployment Interface}{20}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Purpose and Design Philosophy}{20}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Technology Stack}{20}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}Input Modes and User Experience}{20}{subsection.7.3}%
+\contentsline {subsubsection}{\numberline {7.3.1}Mode 1: Image Upload}{20}{subsubsection.7.3.1}%
+\contentsline {subsubsection}{\numberline {7.3.2}Mode 2: Webcam Snapshot}{20}{subsubsection.7.3.2}%
+\contentsline {subsubsection}{\numberline {7.3.3}Mode 3: Live Video Stream}{21}{subsubsection.7.3.3}%
+\contentsline {subsection}{\numberline {7.4}Performance and Real-World Deployment}{21}{subsection.7.4}%
+\contentsline {subsubsection}{\numberline {7.4.1}Sampling Efficiency}{21}{subsubsection.7.4.1}%
+\contentsline {subsubsection}{\numberline {7.4.2}Deployment Readiness and Commercial Potential}{21}{subsubsection.7.4.2}%
+\contentsline {subsection}{\numberline {7.5}User Interface and Demonstration}{22}{subsection.7.5}%
+\contentsline {section}{\numberline {8}Experimental Setup and Training Protocol}{22}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Training Configuration}{22}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Hardware and Software Environment}{22}{subsection.8.2}%
+\contentsline {section}{\numberline {9}Results}{23}{section.9}%
+\contentsline {subsection}{\numberline {9.1}Verified Current Benchmark Table}{23}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}Comparative Interpretation}{23}{subsection.9.2}%
+\contentsline {subsection}{\numberline {9.3}Validation Set Performance}{24}{subsection.9.3}%
+\contentsline {section}{\numberline {10}Ablation Studies and Optimization Analysis}{24}{section.10}%
+\contentsline {subsection}{\numberline {10.1}Experimental Design}{24}{subsection.10.1}%
+\contentsline {subsection}{\numberline {10.2}E1: Data Augmentation}{25}{subsection.10.2}%
+\contentsline {subsubsection}{\numberline {10.2.1}Configuration}{25}{subsubsection.10.2.1}%
+\contentsline {subsubsection}{\numberline {10.2.2}Results}{25}{subsubsection.10.2.2}%
+\contentsline {subsection}{\numberline {10.3}E2: Dropout Regularization (p=0.5)}{25}{subsection.10.3}%
+\contentsline {subsubsection}{\numberline {10.3.1}Configuration}{25}{subsubsection.10.3.1}%
+\contentsline {subsubsection}{\numberline {10.3.2}Results}{25}{subsubsection.10.3.2}%
+\contentsline {subsection}{\numberline {10.4}E3: Weight Decay Regularization}{26}{subsection.10.4}%
+\contentsline {subsubsection}{\numberline {10.4.1}E3a: Weight Decay = 0.0001}{26}{subsubsection.10.4.1}%
+\contentsline {subsubsection}{\numberline {10.4.2}E3b: Weight Decay = 0.001}{26}{subsubsection.10.4.2}%
+\contentsline {subsubsection}{\numberline {10.4.3}Analysis}{26}{subsubsection.10.4.3}%
+\contentsline {subsection}{\numberline {10.5}E4: Learning Rate Schedule (Cosine Annealing)}{26}{subsection.10.5}%
+\contentsline {subsubsection}{\numberline {10.5.1}Configuration}{26}{subsubsection.10.5.1}%
+\contentsline {subsubsection}{\numberline {10.5.2}Results}{27}{subsubsection.10.5.2}%
+\contentsline {subsection}{\numberline {10.6}E5: Architecture Comparison (SimpleCNN vs LiteCNN)}{27}{subsection.10.6}%
+\contentsline {subsubsection}{\numberline {10.6.1}Results}{27}{subsubsection.10.6.1}%
+\contentsline {subsubsection}{\numberline {10.6.2}Analysis}{27}{subsubsection.10.6.2}%
+\contentsline {subsection}{\numberline {10.7}Ablation Summary Table}{28}{subsection.10.7}%
+\contentsline {subsection}{\numberline {10.8}Key Takeaways from Ablation Studies}{28}{subsection.10.8}%
+\contentsline {subsection}{\numberline {10.9}Historical Context (Non-claim Support)}{28}{subsection.10.9}%
+\contentsline {section}{\numberline {11}Per-Class Performance Analysis}{29}{section.11}%
+\contentsline {subsection}{\numberline {11.1}Confusion Matrix Interpretation}{29}{subsection.11.1}%
+\contentsline {subsubsection}{\numberline {11.1.1}Strong Performance Classes}{29}{subsubsection.11.1.1}%
+\contentsline {subsubsection}{\numberline {11.1.2}Moderate Performance Classes}{29}{subsubsection.11.1.2}%
+\contentsline {subsubsection}{\numberline {11.1.3}Challenging Class}{29}{subsubsection.11.1.3}%
+\contentsline {subsection}{\numberline {11.2}Common Confusion Patterns}{29}{subsection.11.2}%
+\contentsline {subsection}{\numberline {11.3}F1-Score Analysis}{29}{subsection.11.3}%
+\contentsline {subsection}{\numberline {11.4}Detailed Confusion Matrices: Heatmap Analysis}{30}{subsection.11.4}%
+\contentsline {subsubsection}{\numberline {11.4.1}E1: Data Augmentation}{30}{subsubsection.11.4.1}%
+\contentsline {subsubsection}{\numberline {11.4.2}E2: Dropout 0.5}{31}{subsubsection.11.4.2}%
+\contentsline {subsubsection}{\numberline {11.4.3}E3a: Weight Decay 0.0001}{31}{subsubsection.11.4.3}%
+\contentsline {subsubsection}{\numberline {11.4.4}E3b: Weight Decay 0.001}{31}{subsubsection.11.4.4}%
+\contentsline {subsubsection}{\numberline {11.4.5}E4: Cosine Learning Rate Schedule}{32}{subsubsection.11.4.5}%
+\contentsline {subsubsection}{\numberline {11.4.6}E5: LiteCNN Architecture}{32}{subsubsection.11.4.6}%
+\contentsline {section}{\numberline {12}Limitations and Challenges}{33}{section.12}%
+\contentsline {subsection}{\numberline {12.1}Dataset Limitations}{33}{subsection.12.1}%
+\contentsline {subsubsection}{\numberline {12.1.1}Low Resolution and Grayscale}{33}{subsubsection.12.1.1}%
+\contentsline {subsubsection}{\numberline {12.1.2}Class Imbalance}{33}{subsubsection.12.1.2}%
+\contentsline {subsubsection}{\numberline {12.1.3}Human Baseline}{33}{subsubsection.12.1.3}%
+\contentsline {subsection}{\numberline {12.2}Model Limitations}{34}{subsection.12.2}%
+\contentsline {subsubsection}{\numberline {12.2.1}Domain Specificity}{34}{subsubsection.12.2.1}%
+\contentsline {subsubsection}{\numberline {12.2.2}Temporal Information}{34}{subsubsection.12.2.2}%
+\contentsline {subsubsection}{\numberline {12.2.3}Context Blindness}{34}{subsubsection.12.2.3}%
+\contentsline {subsection}{\numberline {12.3}Deployment Limitations}{34}{subsection.12.3}%
+\contentsline {subsubsection}{\numberline {12.3.1}Latency Trade-offs}{34}{subsubsection.12.3.1}%
+\contentsline {subsubsection}{\numberline {12.3.2}CPU-Only Constraint}{35}{subsubsection.12.3.2}%
+\contentsline {section}{\numberline {13}Future Work and Recommendations}{35}{section.13}%
+\contentsline {subsection}{\numberline {13.1}Model Architecture Improvements}{35}{subsection.13.1}%
+\contentsline {subsubsection}{\numberline {13.1.1}Attention Mechanisms}{35}{subsubsection.13.1.1}%
+\contentsline {subsubsection}{\numberline {13.1.2}Multi-Scale Feature Fusion}{35}{subsubsection.13.1.2}%
+\contentsline {subsubsection}{\numberline {13.1.3}Knowledge Distillation}{35}{subsubsection.13.1.3}%
+\contentsline {subsection}{\numberline {13.2}Data and Training Improvements}{36}{subsection.13.2}%
+\contentsline {subsubsection}{\numberline {13.2.1}Data Augmentation Strategies}{36}{subsubsection.13.2.1}%
+\contentsline {subsubsection}{\numberline {13.2.2}Class Imbalance Mitigation}{36}{subsubsection.13.2.2}%
+\contentsline {subsubsection}{\numberline {13.2.3}Training Data Diversification}{36}{subsubsection.13.2.3}%
+\contentsline {subsection}{\numberline {13.3}Deployment Optimizations}{36}{subsection.13.3}%
+\contentsline {subsubsection}{\numberline {13.3.1}Model Quantization}{36}{subsubsection.13.3.1}%
+\contentsline {subsubsection}{\numberline {13.3.2}Mobile and Edge Deployment}{36}{subsubsection.13.3.2}%
+\contentsline {subsubsection}{\numberline {13.3.3}Temporal Smoothing for Video}{37}{subsubsection.13.3.3}%
+\contentsline {subsection}{\numberline {13.4}Application Enhancements}{37}{subsection.13.4}%
+\contentsline {subsubsection}{\numberline {13.4.1}Multi-Modal Emotion Recognition}{37}{subsubsection.13.4.1}%
+\contentsline {subsubsection}{\numberline {13.4.2}Real-World Evaluation}{37}{subsubsection.13.4.2}%
+\contentsline {subsubsection}{\numberline {13.4.3}Explainability and Interpretability}{37}{subsubsection.13.4.3}%
+\contentsline {section}{\numberline {14}Objective Achievement Matrix}{38}{section.14}%
+\contentsline {section}{\numberline {15}Discussion}{38}{section.15}%
+\contentsline {subsection}{\numberline {15.1}What Was Achieved Well}{38}{subsection.15.1}%
+\contentsline {subsubsection}{\numberline {15.1.1}Engineering Integration Quality}{38}{subsubsection.15.1.1}%
+\contentsline {subsubsection}{\numberline {15.1.2}Objective Achievement}{39}{subsubsection.15.1.2}%
+\contentsline {subsubsection}{\numberline {15.1.3}Architectural Innovation}{39}{subsubsection.15.1.3}%
+\contentsline {subsubsection}{\numberline {15.1.4}Ablation Study Insights}{39}{subsubsection.15.1.4}%
+\contentsline {subsection}{\numberline {15.2}Challenges and Lessons Learned}{40}{subsection.15.2}%
+\contentsline {subsubsection}{\numberline {15.2.1}Dataset Constraints}{40}{subsubsection.15.2.1}%
+\contentsline {subsubsection}{\numberline {15.2.2}Accuracy-Efficiency Trade-off}{40}{subsubsection.15.2.2}%
+\contentsline {subsubsection}{\numberline {15.2.3}Checkpoint Reproducibility}{41}{subsubsection.15.2.3}%
+\contentsline {subsection}{\numberline {15.3}Remaining Scientific and Reporting Gaps}{41}{subsection.15.3}%
+\contentsline {subsection}{\numberline {15.4}Comparison with State-of-the-Art}{41}{subsection.15.4}%
+\contentsline {subsubsection}{\numberline {15.4.1}Published Lightweight FER Models}{41}{subsubsection.15.4.1}%
+\contentsline {subsubsection}{\numberline {15.4.2}Performance vs. Human Baseline}{42}{subsubsection.15.4.2}%
+\contentsline {subsection}{\numberline {15.5}Deployment Readiness Assessment}{42}{subsection.15.5}%
+\contentsline {subsubsection}{\numberline {15.5.1}Production Strengths}{42}{subsubsection.15.5.1}%
+\contentsline {subsubsection}{\numberline {15.5.2}Production Gaps}{42}{subsubsection.15.5.2}%
+\contentsline {subsection}{\numberline {15.6}Threats to Validity}{42}{subsection.15.6}%
+\contentsline {section}{\numberline {16}Conclusion}{43}{section.16}%
+\contentsline {section}{\numberline {17}Compliance with Final Deliverable Requirements}{43}{section.17}%
+\contentsline {section}{References}{44}{section*.26}%
+\contentsline {section}{\numberline {A}Individual Contributions of the Group Project}{45}{appendix.A}%
+\contentsline {subsection}{\numberline {A.1}Member Responsibilities and Outcomes}{45}{subsection.A.1}%
+\contentsline {subsection}{\numberline {A.2}Integration-Level Team Achievement}{45}{subsection.A.2}%
