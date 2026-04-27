@@ -1,0 +1,38 @@
+# Ignore Mac system files
+.DS_Store
+
+# Ignore datasets and large data folders  
+data/fer2013/
+*.csv
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore local environments
+.venv/
+venv/
+env/
+
+# Ignore model weights and artifacts (large files - use Git LFS or download separately)
+*.pth
+*.pkl
+saved_models/*.pth
+saved_models/*.pkl
+
+# Ignore LaTeX build artifacts
+*.aux
+*.log
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# Ignore local notes
+zachs_addition_notes.md
+*_addition_notes.md
