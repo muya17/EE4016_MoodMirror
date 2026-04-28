@@ -47,6 +47,31 @@ The web app will launch at `http://localhost:8501` with three input modes:
 2. **Webcam Snapshot**: Single-frame real-time inference
 3. **Live Video**: Continuous emotion recognition with intelligent frame sampling
 
+## 🎬 Demo Showcase
+
+### Web Application Interface
+
+<div align="center">
+  <img src="assets/web_app_img.png" alt="MoodMirror Web Interface" width="80%">
+  <p><em>Interactive Streamlit web application with model selection and multi-modal input support</em></p>
+</div>
+
+### Live Inference Example
+
+<div align="center">
+  <img src="assets/web_app_litecnn.png" alt="LiteCNN Live Inference" width="80%">
+  <p><em>Real-time emotion recognition with LiteCNN showing prediction confidence scores across all 7 emotions</em></p>
+</div>
+
+### 🎥 System in Action
+
+<div align="center">
+  <img src="assets/demo_30s.gif" alt="MoodMirror Live Demo" width="80%">
+  <p><em>30-second demonstration showing emotion recognition across multiple test images</em></p>
+</div>
+
+> **Note**: The system successfully predicts emotions on unseen faces with confidence distributions. Deployed on CPU with sub-10ms inference latency per frame.
+
 ## 📁 Repository Structure
 
 ```
@@ -55,14 +80,12 @@ The web app will launch at `http://localhost:8501` with three input modes:
 │   ├── data_loader.py     # FER2013 data pipeline
 │   ├── baselines.py       # HOG+SVM implementation
 │   └── train_*.py         # Model training scripts
-├── m4/                     # Ablation studies (E1-E5)
+├── ablation_studies/       # Ablation studies (E1-E5)
 │   ├── configs/           # Experiment configuration YAML files
 │   ├── experiments/       # Experiment runner and logger
 │   └── models.py          # Ablation-specific models
 ├── demo_app.py            # Streamlit web application
-├── notebooks/             # Jupyter/Colab development notebooks
-├── docs/                  # Project documentation and notes
-├── assets/                # Web app UI images
+├── assets/                # Web app UI images and demo GIF
 ├── submission_docs/       # Final submission package
 └── FINAL_TECHNICAL_REPORT.pdf  # Complete technical report
 ```
@@ -96,25 +119,6 @@ Pre-trained model weights are available in `submission_docs/source_code/saved_mo
 ## 📊 Ablation Studies
 
 Comprehensive experiments analyzing:
-- You may need a Kaggle account to download the dataset files.
-
-## Run Demo App
-1. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-2. Run Streamlit app:
-   ```bash
-   streamlit run demo_app.py
-   ```
-
-Live video mode requires browser camera permissions and uses `streamlit-webrtc`.
-
-## Demo Preview
-The Streamlit integration app is ready for team integration.
-
-![MoodMirror Demo UI](assets/demo_preview.png)
-
 - **E1**: Data Augmentation (+0.22% accuracy)
 - **E2**: Dropout Regularization (0.3 vs 0.5)
 - **E3**: Weight Decay (0.0001 vs 0.001)
@@ -150,7 +154,7 @@ This project is licensed under the MIT License.
 
 ## 📧 Contact
 
-For questions or collaboration inquiries, please open an issue or contact the team through the university.
+For questions or collaboration, reach out via email: [zmkapya2-c@my.cityu.edu.hk](mailto:zmkapya2-c@my.cityu.edu.hk)
 
 ---
 

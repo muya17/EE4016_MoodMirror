@@ -3,6 +3,7 @@
 
 # Ignore datasets and large data folders  
 data/fer2013/
+ablation_studies/data/fer2013/
 *.csv
 
 # Ignore Python cache files
@@ -36,3 +37,9 @@ saved_models/*.pkl
 # Ignore local notes
 zachs_addition_notes.md
 *_addition_notes.md
+
+# Ignore demo video files (large files - available in submission package)
+*.mp4
+*.avi
+*.mov
+*.mkv
